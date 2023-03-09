@@ -3,6 +3,7 @@ import express, { Application } from "express";
 import helmet from "helmet";
 
 import errorMiddleware from "@/middlewares/error.middleware";
+import authRoutes from "@/routes/auth.routes";
 import helloRoutes from "@/routes/hello.routes";
 
 export class App {
@@ -19,6 +20,7 @@ export class App {
 		this._app.use(express.json());
 		this._app.use(express.urlencoded({ extended: true }));
 		this._app.use("/", helloRoutes);
+		this._app.use("/api/auth", authRoutes);
 		this._app.use(errorMiddleware);
 	}
 

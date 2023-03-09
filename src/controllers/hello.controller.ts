@@ -12,5 +12,3 @@ class HelloController {
 }
 
 export default new HelloController();
-
-//dsadasd
