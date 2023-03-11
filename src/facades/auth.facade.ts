@@ -60,6 +60,8 @@ class AuthFacade {
 					expiresIn: "30m",
 				},
 			);
+			// add a new header to the response
+			res.setHeader("Access-Control-Expose-Headers", "auth-token");
 			res.header("auth-token", token).status(201).json(user);
 		} catch (error) {
 			console.error(error);
