@@ -6,10 +6,10 @@ class UserFacade {
 	async listUsers(req: Request, res: Response) {
 		try {
 			const users = await userModel.find();
-			res.status(200).json(users);
+			return res.status(200).json(users);
 		} catch (error) {
 			console.error(error);
-			res.status(500).json({ message: "Internal server error" });
+			return res.status(500).json({ message: "Internal server error" });
 		}
 	}
 
@@ -18,10 +18,10 @@ class UserFacade {
 			const user = await userModel.findById(req.userId, { password: 0 });
 			if (!user) return res.status(404).json("No user found");
 
-			res.json(user);
+			return res.status(200).json(user);
 		} catch (error) {
 			console.error(error);
-			res.status(500).json({ message: "Internal server error" });
+			return res.status(500).json({ message: "Internal server error" });
 		}
 	}
 }
