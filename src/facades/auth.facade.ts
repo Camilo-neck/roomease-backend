@@ -24,7 +24,7 @@ class AuthFacade {
 				process.env.TOKEN_SECRET || "S26ZNvgSv4",
 			);
 
-			//save token in cient side cookie with same duration as token
+			//save token in client side cookie with same duration as token
 			res.cookie("token", token, {
 				httpOnly: true,
 				secure: true,
