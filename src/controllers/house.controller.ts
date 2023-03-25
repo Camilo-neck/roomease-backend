@@ -12,6 +12,15 @@ class HouseController {
 	async getById(req: Request, res: Response): Promise<Response | undefined> {
 		return houseFacade.getById(req, res);
 	}
+	async update(req: Request, res: Response): Promise<Response | undefined> {
+		return houseFacade.update(req, res);
+	}
+	async delete(req: Request, res: Response): Promise<Response | undefined> {
+		return houseFacade.delete(req, res);
+	}
+	async join(req: Request, res: Response): Promise<Response | undefined> {
+		return houseFacade.join(req, res);
+	}
 }
 
 export default new HouseController();

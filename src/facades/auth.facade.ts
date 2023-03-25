@@ -67,7 +67,10 @@ class AuthFacade {
 			const correctPassword: boolean = await user.validatePassword(
 				req.body.password,
 			);
-			if (!correctPassword) return res.status(400).json("Invalid password");
+			if (!correctPassword)
+				return res.status(400).json({
+					message: "Email or password is wrong",
+				});
 
 			//token
 			const token: string = jwt.sign(

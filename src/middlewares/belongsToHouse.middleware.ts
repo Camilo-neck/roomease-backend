@@ -6,13 +6,14 @@ async function belongsToHouse(req: Request, res: Response, next: NextFunction) {
 	try {
 		const { houseId } = req.params;
 
-		const house = await houseModel.find({ _id: houseId, users: req.userId });
-		console.log(house.length > 0);
-		if (house.length > 0) {
+		const house = await houseModel.findOne({ _id: houseId, users: req.userId });
+		if (house) {
 			return next();
 		}
 
-		return res.status(404).json({ message: "User not belongs to this house" });
+		return res.status(404).json({
+			message: "User not belongs to this house or the house doesn't exist",
+		});
 	} catch (error) {
 		console.error(error);
 		return res.status(500).json({ message: "Internal server error" });
