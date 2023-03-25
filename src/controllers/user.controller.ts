@@ -12,6 +12,12 @@ class UserControler {
 	async getHouses(req: Request, res: Response): Promise<Response | undefined> {
 		return userFacade.getHouses(req, res);
 	}
+	async getUserInfo(
+		req: Request,
+		res: Response,
+	): Promise<Response | undefined> {
+		return userFacade.getInfo(req, res);
+	}
 }
 
 export default new UserControler();

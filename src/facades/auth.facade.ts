@@ -6,7 +6,15 @@ import userModel from "../models/user.model";
 class AuthFacade {
 	async register(req: Request, res: Response) {
 		try {
-			const { name, email, password } = req.body;
+			const {
+				name,
+				email,
+				password,
+				birth_date,
+				phone,
+				description,
+				profile_picture,
+			} = req.body;
 
 			// Check if a user with the same email already exists
 			const existingUser = await userModel.findOne({ email });
@@ -14,7 +22,15 @@ class AuthFacade {
 				return res.status(409).json({ message: "User already exists" });
 			}
 
-			const user = new userModel({ name, email, password });
+			const user = new userModel({
+				name,
+				email,
+				password,
+				birth_date,
+				phone,
+				description,
+				profile_picture,
+			});
 			user.password = await user.encryptPassword(password);
 			const savedUser = await user.save();
 
