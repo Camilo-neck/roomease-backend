@@ -1,12 +1,13 @@
 import express from "express";
 
-import { TokenValidation } from "@/middlewares/verifyToken";
+import { Auth } from "@/middlewares/auth.middleware";
 
 import userController from "../controllers/user.controller";
 
 const router = express.Router();
 
-router.get("/users", userController.listUsers);
-router.get("/profile", TokenValidation, userController.profile);
+router.get("/list", Auth, userController.listUsers); //should be disabled
+router.get("/profile", Auth, userController.profile);
+router.get("/houses", Auth, userController.getHouses);
 
 export default router;

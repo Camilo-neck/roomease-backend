@@ -32,7 +32,9 @@ class AuthFacade {
 				maxAge: 1000 * 60 * 30,
 			});
 
-			res.header("auth-token", token).status(201).json(savedUser);
+			res.header("auth-token", token).status(201).json({
+				message: "User created successfully",
+			});
 		} catch (error) {
 			console.error(error);
 			res.status(500).json({ message: "Internal server error" });
