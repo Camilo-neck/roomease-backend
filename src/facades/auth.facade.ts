@@ -60,7 +60,10 @@ class AuthFacade {
 	async login(req: Request, res: Response) {
 		try {
 			const user = await userModel.findOne({ email: req.body.email });
-			if (!user) return res.status(400).json("Email or password is wrong");
+			if (!user)
+				return res.status(400).json({
+					message: "Email or password is wrong",
+				});
 
 			console.log(user);
 
