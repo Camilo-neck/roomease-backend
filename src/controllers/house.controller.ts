@@ -21,6 +21,9 @@ class HouseController {
 	async join(req: Request, res: Response): Promise<Response | undefined> {
 		return houseFacade.join(req, res);
 	}
+	async handleJoin(req: Request, res: Response): Promise<Response | undefined> {
+		return houseFacade.handleJoin(req, res);
+	}
 }
 
 export default new HouseController();

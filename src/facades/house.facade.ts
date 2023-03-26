@@ -9,6 +9,11 @@ class HouseFacade {
 			const { name, description, house_picture, address, users, tags } =
 				req.body;
 
+			const user = await userModel.findById(req.userId);
+			if (!user) {
+				return res.status(404).json({ message: "User not found" });
+			}
+
 			if (name.includes("#")) {
 				return res.status(400).json({ message: "Invalid name" });
 			}
@@ -32,13 +37,8 @@ class HouseFacade {
 			const house = new houseModel(houseData);
 			await house.save();
 
-			const user = await userModel.findById(req.userId);
-			if (user) {
-				user.houses.push(house._id.toString());
-				await user.save();
-			} else {
-				return res.status(404).json({ message: "User not found" });
-			}
+			user.houses.push(house._id.toString());
+			await user.save();
 
 			return res.status(201).json({
 				message: "House created successfully",
@@ -75,10 +75,11 @@ class HouseFacade {
 		try {
 			const { houseId } = req.params;
 			const house = await houseModel.findOne({ _id: houseId });
-			if (house) {
-				return res.status(200).json(house);
+			if (!house) {
+				return res.status(404).json({ message: "House not found" });
 			}
-			return res.status(404).json({ message: "House not found" });
+
+			return res.status(200).json(house);
 		} catch (error) {
 			console.error(error);
 			return res.status(500).json({ message: "Internal server error" });
@@ -90,25 +91,25 @@ class HouseFacade {
 			const { name, description, house_picture, address, tags } = req.body;
 
 			const { houseId } = req.params;
+			const house = await houseModel.findOne({ _id: houseId });
+			if (!house) {
+				return res.status(404).json({ message: "House not found" });
+			}
 
 			if (name.includes("#")) {
 				return res.status(400).json({ message: "Invalid name" });
 			}
 
-			const house = await houseModel.findOne({ _id: houseId });
-			if (house) {
-				if (name !== house.name) {
-					house.house_code = await this.generateCode(name);
-				}
-
-				house.name = name;
-				house.description = description;
-				house.house_picture = house_picture;
-				house.address = address;
-				house.tags = tags;
-				await house.save();
-				return res.status(200).json({ message: "House modified" });
+			if (name !== house.name) {
+				house.house_code = await this.generateCode(name);
 			}
+			house.name = name;
+			house.description = description;
+			house.house_picture = house_picture;
+			house.address = address;
+			house.tags = tags;
+			await house.save();
+			return res.status(200).json({ message: "House modified" });
 		} catch (error) {
 			console.error(error);
 			return res.status(500).json({ message: "Internal server error" });
@@ -129,36 +130,35 @@ class HouseFacade {
 	}
 
 	async join(req: Request, res: Response) {
-		//NOT FULLY TESTED
 		try {
 			const { house_code } = req.params;
+			const house = await houseModel.findOne({ house_code });
 
 			//check if house exists
-			console.log(house_code);
-			const house = houseModel.findOne({ house_code });
 			if (!house) {
 				return res.status(404).json({ message: "House not found" });
 			}
 
-			const houseData = await house;
-
+			//check if user exists
 			const user = await userModel.findById(req.userId);
-			if (user && houseData) {
-				//check if user is already in house
-				const houseId = houseData._id.toString();
-				if (user.houses.includes(houseId)) {
-					return res.status(400).json({ message: "User already in house" });
-				}
-				//check if user has a pending request
-				if (houseData.pending_users.includes(req.userId)) {
-					return res
-						.status(400)
-						.json({ message: "User already has a pending request" });
-				}
-			} else {
+			if (!user) {
 				return res.status(404).json({ message: "User not found" });
 			}
 
+			//check if user is already in house
+			const houseId = house._id.toString();
+			if (user.houses.includes(houseId)) {
+				return res.status(400).json({ message: "User already in house" });
+			}
+
+			//check if user has a pending request
+			if (house.pending_users.includes(req.userId)) {
+				return res
+					.status(400)
+					.json({ message: "User already has a pending request" });
+			}
+
+			//Add user to pending users
 			await houseModel.updateOne(
 				{ house_code },
 				{ $push: { pending_users: req.userId } },
@@ -168,6 +168,62 @@ class HouseFacade {
 			console.error(error);
 			return res.status(500).json({ message: "Internal server error" });
 		}
+	}
+
+	async handleJoin(req: Request, res: Response) {
+		try {
+			const { userId, accept } = req.body;
+
+			const { houseId } = req.params;
+			const house = await houseModel.findOne({ _id: houseId });
+
+			//check if house exists
+			if (!house) {
+				return res.status(404).json({ message: "House not found" });
+			}
+
+			//check if user exists
+			const user = await userModel.findById(userId);
+			if (!user) {
+				return res.status(404).json({ message: "User not found" });
+			}
+
+			//check if user has a pending request
+			const userHasPendingRequest = house.pending_users.includes(userId);
+			if (!userHasPendingRequest) {
+				return res
+					.status(400)
+					.json({ message: "User does not have a join request to this house" });
+			}
+
+			//Accept join request
+			if (accept) {
+				await this.acceptRequest(userId, houseId);
+				return res.status(200).json({ message: "Request accepted" });
+			}
+
+			//Reject join request
+			await this.rejectRequest(userId, houseId);
+			return res.status(200).json({ message: "Request rejected" });
+		} catch (error) {
+			console.error(error);
+			return res.status(500).json({ message: "Internal server error" });
+		}
+	}
+
+	async acceptRequest(userId: string, houseId: string) {
+		await houseModel.updateOne(
+			{ _id: houseId },
+			{ $push: { users: userId }, $pull: { pending_users: userId } },
+		);
+		await userModel.updateOne({ _id: userId }, { $push: { houses: houseId } });
+	}
+
+	async rejectRequest(userId: string, houseId: string) {
+		await houseModel.updateOne(
+			{ _id: houseId },
+			{ $pull: { pending_users: userId } },
+		);
 	}
 
 	async generateCode(name: string) {
