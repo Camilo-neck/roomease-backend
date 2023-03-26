@@ -6,7 +6,7 @@ async function owner(req: Request, res: Response, next: NextFunction) {
 	try {
 		const { houseId } = req.params;
 
-		const house = await houseModel.find({ _id: houseId, owner: req.userId });
+		const house = await houseModel.findOne({ _id: houseId, owner: req.userId });
 		if (house) {
 			return next();
 		}
