@@ -1,6 +1,7 @@
 import { NextFunction, Request, Response } from "express";
 
 import houseModel from "@/models/house.model";
+import { STATUS_CODES } from "@/utils/constants";
 
 async function owner(req: Request, res: Response, next: NextFunction) {
 	try {
@@ -11,12 +12,14 @@ async function owner(req: Request, res: Response, next: NextFunction) {
 			return next();
 		}
 
-		return res.status(404).json({
+		return res.status(STATUS_CODES.NOT_FOUND).json({
 			message: "User is not owner of this house or the house doesn't exist",
 		});
 	} catch (error) {
 		console.error(error);
-		return res.status(500).json({ message: "Internal server error" });
+		return res
+			.status(STATUS_CODES.INTERNAL_ERROR)
+			.json({ message: "Internal server error" });
 	}
 }
 

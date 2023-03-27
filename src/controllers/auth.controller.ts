@@ -2,7 +2,7 @@ import { Request, Response } from "express";
 
 import authFacade from "@/facades/auth.facade";
 
-class authControler {
+class AuthControler {
 	//use facade to handle the logic
 	async register(req: Request, res: Response) {
 		return authFacade.register(req, res);
@@ -13,4 +13,4 @@ class authControler {
 	}
 }
 
-export default new authControler();
+export default new AuthControler();

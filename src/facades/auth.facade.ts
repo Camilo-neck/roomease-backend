@@ -1,6 +1,8 @@
 import { Request, Response } from "express";
 import jwt from "jsonwebtoken";
 
+import { STATUS_CODES } from "@/utils/constants";
+
 import userModel from "../models/user.model";
 
 class AuthFacade {
@@ -50,12 +52,14 @@ class AuthFacade {
 				maxAge: 1000 * 60 * 30,
 			});
 
-			res.header("auth-token", token).status(201).json({
+			res.header("auth-token", token).status(STATUS_CODES.CREATED).json({
 				message: "User created successfully",
 			});
 		} catch (error) {
 			console.error(error);
-			res.status(500).json({ message: "Internal server error" });
+			res
+				.status(STATUS_CODES.INTERNAL_ERROR)
+				.json({ message: "Internal server error" });
 		}
 	}
 
@@ -63,7 +67,7 @@ class AuthFacade {
 		try {
 			const user = await userModel.findOne({ email: req.body.email });
 			if (!user)
-				return res.status(400).json({
+				return res.status(STATUS_CODES.BAD_REQUEST).json({
 					message: "Email or password is wrong",
 				});
 
@@ -73,7 +77,7 @@ class AuthFacade {
 				req.body.password,
 			);
 			if (!correctPassword)
-				return res.status(400).json({
+				return res.status(STATUS_CODES.BAD_REQUEST).json({
 					message: "Email or password is wrong",
 				});
 
@@ -88,10 +92,12 @@ class AuthFacade {
 			);
 			// add a new header to the response
 			res.setHeader("Access-Control-Expose-Headers", "auth-token");
-			res.header("auth-token", token).status(201).json(user);
+			res.header("auth-token", token).status(STATUS_CODES.CREATED).json(user);
 		} catch (error) {
 			console.error(error);
-			res.status(500).json({ message: "Internal server error" });
+			res
+				.status(STATUS_CODES.INTERNAL_ERROR)
+				.json({ message: "Internal server error" });
 		}
 	}
 }

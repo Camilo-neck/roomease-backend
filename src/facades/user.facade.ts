@@ -1,5 +1,7 @@
 import { Request, Response } from "express";
 
+import { STATUS_CODES } from "@/utils/constants";
+
 import houseModel from "../models/house.model";
 import userModel from "../models/user.model";
 
@@ -7,22 +9,27 @@ class UserFacade {
 	async listUsers(req: Request, res: Response) {
 		try {
 			const users = await userModel.find();
-			return res.status(200).json(users);
+			return res.status(STATUS_CODES.OK).json(users);
 		} catch (error) {
 			console.error(error);
-			return res.status(500).json({ message: "Internal server error" });
+			return res
+				.status(STATUS_CODES.INTERNAL_ERROR)
+				.json({ message: "Internal server error" });
 		}
 	}
 
 	async profile(req: Request, res: Response) {
 		try {
 			const user = await userModel.findById(req.userId, { password: 0 });
-			if (!user) return res.status(404).json("No user found");
+			if (!user)
+				return res.status(STATUS_CODES.NOT_FOUND).json("No user found");
 
-			return res.status(200).json(user);
+			return res.status(STATUS_CODES.OK).json(user);
 		} catch (error) {
 			console.error(error);
-			return res.status(500).json({ message: "Internal server error" });
+			return res
+				.status(STATUS_CODES.INTERNAL_ERROR)
+				.json({ message: "Internal server error" });
 		}
 	}
 
@@ -38,10 +45,12 @@ class UserFacade {
 					address: 1,
 				},
 			);
-			return res.status(200).json(houses);
+			return res.status(STATUS_CODES.OK).json(houses);
 		} catch (error) {
 			console.error(error);
-			return res.status(500).json({ message: "Internal server error" });
+			return res
+				.status(STATUS_CODES.INTERNAL_ERROR)
+				.json({ message: "Internal server error" });
 		}
 	}
 
@@ -51,12 +60,15 @@ class UserFacade {
 				{ email: req.body.email },
 				{ password: 0 },
 			);
-			if (!user) return res.status(404).json("No user found");
+			if (!user)
+				return res.status(STATUS_CODES.NOT_FOUND).json("No user found");
 
-			return res.status(200).json(user);
+			return res.status(STATUS_CODES.OK).json(user);
 		} catch (error) {
 			console.error(error);
-			return res.status(500).json({ message: "Internal server error" });
+			return res
+				.status(STATUS_CODES.INTERNAL_ERROR)
+				.json({ message: "Internal server error" });
 		}
 	}
 }
