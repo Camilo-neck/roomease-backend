@@ -28,9 +28,9 @@ export const Auth = (req: Request, res: Response, next: NextFunction) => {
 		//catch JsonWebTokenError
 	} catch (error) {
 		if (error instanceof JsonWebTokenError) {
-			return res.status(401).json("Invalid or expired token");
+			return res.status(401).json({ message: "Invalid or expired token" });
 		} else {
-			return res.status(500).json("Internal server error");
+			return res.status(500).json({ message: "Internal server error" });
 		}
 	}
 };

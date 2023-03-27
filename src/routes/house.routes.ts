@@ -14,5 +14,6 @@ router.get("/:houseId", [Auth, BelongsToHouse], houseController.getById);
 router.put("/update/:houseId", [Auth, Owner], houseController.update);
 router.delete("/delete/:houseId", [Auth, Owner], houseController.delete);
 router.get("/join/:house_code", Auth, houseController.join);
+router.post("/handleJoin/:houseId", [Auth, Owner], houseController.handleJoin);
 
 export default router;
