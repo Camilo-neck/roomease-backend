@@ -30,7 +30,13 @@ class UserFacade {
 		try {
 			const houses = await houseModel.find(
 				{ users: req.userId },
-				{ name: 1, house_code: 1, house_picture: 1, address: 1 },
+				{
+					name: 1,
+					house_code: 1,
+					description: 1,
+					house_picture: 1,
+					address: 1,
+				},
 			);
 			return res.status(200).json(houses);
 		} catch (error) {

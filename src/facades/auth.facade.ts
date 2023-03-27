@@ -13,7 +13,8 @@ class AuthFacade {
 				birth_date,
 				phone,
 				description,
-				profile_picture,
+				tags,
+				// profile_picture,
 			} = req.body;
 
 			// Check if a user with the same email already exists
@@ -29,7 +30,8 @@ class AuthFacade {
 				birth_date,
 				phone,
 				description,
-				profile_picture,
+				tags,
+				// profile_picture,
 			});
 			user.password = await user.encryptPassword(password);
 			const savedUser = await user.save();
