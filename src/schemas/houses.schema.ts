@@ -6,7 +6,7 @@ const houseSchema = new mongoose.Schema(
 		owner: { type: String, required: true },
 		house_code: { type: String, required: true },
 		description: { type: String, required: true },
-		house_picture: { type: String, required: true },
+		house_picture: { type: String, required: false },
 		address: { type: String, required: true },
 		tags: { type: [String], required: true },
 		users: { type: [String], required: true },
