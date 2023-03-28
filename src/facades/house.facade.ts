@@ -11,11 +11,6 @@ class HouseFacade {
 				req.body;
 
 			const user = await userModel.findById(req.userId);
-			if (!user) {
-				return res
-					.status(STATUS_CODES.NOT_FOUND)
-					.json({ message: "User not found" });
-			}
 
 			if (name.includes("#")) {
 				return res
@@ -42,8 +37,8 @@ class HouseFacade {
 			const house = new houseModel(houseData);
 			await house.save();
 
-			user.houses.push(house._id.toString());
-			await user.save();
+			user?.houses.push(house._id.toString());
+			await user?.save();
 
 			return res.status(STATUS_CODES.CREATED).json({
 				message: "House created successfully",
@@ -82,14 +77,7 @@ class HouseFacade {
 
 	async getById(req: Request, res: Response) {
 		try {
-			const { houseId } = req.params;
-			const house = await houseModel.findOne({ _id: houseId });
-			if (!house) {
-				return res
-					.status(STATUS_CODES.NOT_FOUND)
-					.json({ message: "House not found" });
-			}
-
+			const house = req.house;
 			return res.status(STATUS_CODES.OK).json(house);
 		} catch (error) {
 			console.error(error);
@@ -102,14 +90,7 @@ class HouseFacade {
 	async update(req: Request, res: Response) {
 		try {
 			const { name, description, house_picture, address, tags } = req.body;
-
-			const { houseId } = req.params;
-			const house = await houseModel.findOne({ _id: houseId });
-			if (!house) {
-				return res
-					.status(STATUS_CODES.NOT_FOUND)
-					.json({ message: "House not found" });
-			}
+			const house = req.house;
 
 			if (name.includes("#")) {
 				return res
@@ -153,26 +134,13 @@ class HouseFacade {
 	async join(req: Request, res: Response) {
 		try {
 			const { house_code } = req.params;
-			const house = await houseModel.findOne({ house_code });
+			const house = req.house;
 
-			//check if house exists
-			if (!house) {
-				return res
-					.status(STATUS_CODES.NOT_FOUND)
-					.json({ message: "House not found" });
-			}
-
-			//check if user exists
 			const user = await userModel.findById(req.userId);
-			if (!user) {
-				return res
-					.status(STATUS_CODES.NOT_FOUND)
-					.json({ message: "User not found" });
-			}
 
 			//check if user is already in house
 			const houseId = house._id.toString();
-			if (user.houses.includes(houseId)) {
+			if (user?.houses.includes(houseId)) {
 				return res
 					.status(STATUS_CODES.BAD_REQUEST)
 					.json({ message: "User already in house" });
@@ -204,22 +172,7 @@ class HouseFacade {
 			const { userId, accept } = req.body;
 
 			const { houseId } = req.params;
-			const house = await houseModel.findOne({ _id: houseId });
-
-			//check if house exists
-			if (!house) {
-				return res
-					.status(STATUS_CODES.NOT_FOUND)
-					.json({ message: "House not found" });
-			}
-
-			//check if user exists
-			const user = await userModel.findById(userId);
-			if (!user) {
-				return res
-					.status(STATUS_CODES.NOT_FOUND)
-					.json({ message: "User not found" });
-			}
+			const house = req.house;
 
 			//check if user has a pending request
 			const userHasPendingRequest = house.pending_users.includes(userId);

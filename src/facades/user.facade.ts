@@ -21,9 +21,6 @@ class UserFacade {
 	async profile(req: Request, res: Response) {
 		try {
 			const user = await userModel.findById(req.userId, { password: 0 });
-			if (!user)
-				return res.status(STATUS_CODES.NOT_FOUND).json("No user found");
-
 			return res.status(STATUS_CODES.OK).json(user);
 		} catch (error) {
 			console.error(error);

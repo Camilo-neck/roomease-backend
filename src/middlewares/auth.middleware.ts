@@ -1,6 +1,5 @@
 import { NextFunction, Request, Response } from "express";
-import jwt from "jsonwebtoken";
-import { JsonWebTokenError } from "jsonwebtoken";
+import jwt, { JsonWebTokenError } from "jsonwebtoken";
 
 import { STATUS_CODES } from "@/utils/constants";
 
