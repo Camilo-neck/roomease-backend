@@ -1,13 +1,8 @@
 import { NextFunction, Request, Response } from "express";
 import jwt, { JsonWebTokenError } from "jsonwebtoken";
 
+import { IPayload } from "@/dtos/IPayload.dto";
 import { STATUS_CODES } from "@/utils/constants";
-
-interface IPayload {
-	_id: string;
-	iat: number;
-	exp: number;
-}
 
 export const Auth = (req: Request, res: Response, next: NextFunction) => {
 	const token = req.header("auth-token");
