@@ -8,3 +8,30 @@ export enum STATUS_CODES {
 	NOT_FOUND = 404,
 	INTERNAL_ERROR = 500,
 }
+
+export const AUTH_ROUTES = {
+	PEFIX: "/",
+
+	REGISTER: "/register",
+	LOGIN: "/login",
+};
+
+export const HOUSE_ROUTES = {
+	PREFIX: "/house",
+
+	LIST: "/list",
+	CREATE: "/create",
+	UPDATE: "/update",
+	DELETE: "/delete",
+	JOIN: "/join",
+	HANDLE_JOIN: "/handleJoin",
+};
+
+export const USER_ROUTES = {
+	PREFIX: "/user",
+
+	LIST: "/list",
+	PROFILE: "/profile",
+	HOUSES: "/houses",
+	GET_INFO: "/getInfo",
+};

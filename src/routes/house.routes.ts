@@ -5,31 +5,40 @@ import { BelongsToHouse } from "@/middlewares/belongsToHouse.middleware";
 import { HouseExist } from "@/middlewares/houseExists.middleware";
 import { Owner } from "@/middlewares/owner.middleware";
 import { SchemaValidator } from "@/middlewares/schemaValidator.middeware";
+import { HOUSE_ROUTES } from "@/utils/constants";
 
 import houseController from "../controllers/house.controller";
 
 const router = express.Router();
 
-router.get("/list", Auth, houseController.list); //should be disabled
-router.post("/create", [SchemaValidator, Auth], houseController.create);
+router.get(HOUSE_ROUTES.LIST, Auth, houseController.list); //should be disabled
+router.post(
+	HOUSE_ROUTES.CREATE,
+	[SchemaValidator, Auth],
+	houseController.create,
+);
 router.get(
 	"/:houseId",
 	[Auth, HouseExist, BelongsToHouse],
 	houseController.getById,
 );
 router.put(
-	"/update/:houseId",
+	`${HOUSE_ROUTES.UPDATE}/:houseId`,
 	[SchemaValidator, Auth, HouseExist, Owner],
 	houseController.update,
 );
 router.delete(
-	"/delete/:houseId",
+	`${HOUSE_ROUTES.DELETE}/:houseId`,
 	[Auth, HouseExist, Owner],
 	houseController.delete,
 );
-router.get("/join/:house_code", [Auth, HouseExist], houseController.join);
+router.get(
+	`${HOUSE_ROUTES.JOIN}/:houseId`,
+	[Auth, HouseExist],
+	houseController.join,
+);
 router.post(
-	"/handleJoin/:houseId",
+	`${HOUSE_ROUTES.HANDLE_JOIN}/:houseId`,
 	[SchemaValidator, Auth, HouseExist, Owner],
 	houseController.handleJoin,
 );
