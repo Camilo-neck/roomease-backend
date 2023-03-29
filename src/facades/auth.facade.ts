@@ -52,6 +52,8 @@ class AuthFacade {
 				maxAge: 1000 * 60 * 30,
 			});
 
+			console.log(res.cookie);
+
 			res.header("auth-token", token).status(STATUS_CODES.CREATED).json({
 				message: "User created successfully",
 			});
@@ -88,9 +90,20 @@ class AuthFacade {
 					expiresIn: "30m",
 				},
 			);
-			// add a new header to the response
-			res.setHeader("Access-Control-Expose-Headers", "auth-token");
-			res.header("auth-token", token).status(STATUS_CODES.CREATED).json(user);
+			// res.setHeader("Access-Control-Expose-Headers", "auth-token");
+			// res.header("auth-token", token).status(STATUS_CODES.CREATED).json(user);
+
+			res.setHeader("Access-Control-Expose-Headers", "set-cookie");
+			res.setHeader("Access-Control-Allow-Credentials", "true");
+			res
+				.cookie("auth-token", token, {
+					httpOnly: true,
+					secure: true,
+					sameSite: "none",
+					maxAge: 1000 * 60 * 30,
+				})
+				.status(STATUS_CODES.OK)
+				.json(user);
 		} catch (error) {
 			console.error(error);
 			res
