@@ -71,8 +71,6 @@ class AuthFacade {
 					message: "Email or password is wrong",
 				});
 
-			console.log(user);
-
 			const correctPassword: boolean = await user.validatePassword(
 				req.body.password,
 			);

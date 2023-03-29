@@ -201,6 +201,8 @@ class HouseFacade {
 		}
 	}
 
+	//////////// Helper functions ////////////
+
 	async acceptRequest(userId: string, houseId: string) {
 		await houseModel.updateOne(
 			{ _id: houseId },

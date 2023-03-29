@@ -4,13 +4,14 @@ import { Auth } from "@/middlewares/auth.middleware";
 import { BelongsToHouse } from "@/middlewares/belongsToHouse.middleware";
 import { HouseExist } from "@/middlewares/houseExists.middleware";
 import { Owner } from "@/middlewares/owner.middleware";
+import { SchemaValidator } from "@/middlewares/schemaValidator.middeware";
 
 import houseController from "../controllers/house.controller";
 
 const router = express.Router();
 
 router.get("/list", Auth, houseController.list); //should be disabled
-router.post("/create", Auth, houseController.create);
+router.post("/create", [SchemaValidator, Auth], houseController.create);
 router.get(
 	"/:houseId",
 	[Auth, HouseExist, BelongsToHouse],
@@ -18,7 +19,7 @@ router.get(
 );
 router.put(
 	"/update/:houseId",
-	[Auth, HouseExist, Owner],
+	[SchemaValidator, Auth, HouseExist, Owner],
 	houseController.update,
 );
 router.delete(
@@ -29,7 +30,7 @@ router.delete(
 router.get("/join/:house_code", [Auth, HouseExist], houseController.join);
 router.post(
 	"/handleJoin/:houseId",
-	[Auth, HouseExist, Owner],
+	[SchemaValidator, Auth, HouseExist, Owner],
 	houseController.handleJoin,
 );
 
