@@ -10,8 +10,6 @@ export const SchemaValidator = (
 ) => {
 	try {
 		const route: string = getCleanRoute(req.baseUrl + req.path, req);
-		console.log(">>>>>>", route);
-
 		const schema = RouteSchemas[route];
 		if (!schema) {
 			return res
