@@ -1,18 +1,21 @@
 import mongoose from "mongoose";
 
-import houseSchema from "../schemas/houses.schema";
+import { IHouse } from "@/dtos/Ihouse.dto";
 
-export interface IHouse extends Document {
-	name: string;
-	owner: string;
-	house_code: string;
-	description: string;
-	house_picture: string;
-	address: string;
-	tags: string[];
-	users: string[];
-	pending_users: string[];
-}
+const houseSchema = new mongoose.Schema(
+	{
+		name: { type: String, required: true },
+		owner: { type: String, required: true },
+		house_code: { type: String, required: true },
+		description: { type: String, required: true },
+		house_picture: { type: String, required: false },
+		address: { type: String, required: true },
+		tags: { type: [String], required: true },
+		users: { type: [String], required: true },
+		pending_users: { type: [String], required: true },
+	},
+	{ timestamps: true },
+);
 
 const houseModel = mongoose.model<IHouse>("House", houseSchema);
 
