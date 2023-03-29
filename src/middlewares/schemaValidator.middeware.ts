@@ -1,4 +1,5 @@
 import { NextFunction, Request, Response } from "express";
+import { ObjectSchema } from "joi";
 
 import { STATUS_CODES } from "@/utils/constants";
 import { RouteSchemas } from "@/utils/RouteSchemas/RouteSchemas";
@@ -10,7 +11,7 @@ export const SchemaValidator = (
 ) => {
 	try {
 		const route: string = getCleanRoute(req.baseUrl + req.path, req);
-		const schema = RouteSchemas[route];
+		const schema: ObjectSchema = RouteSchemas[route];
 		if (!schema) {
 			return res
 				.status(STATUS_CODES.INTERNAL_ERROR)
