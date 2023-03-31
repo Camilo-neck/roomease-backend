@@ -32,16 +32,24 @@ class UserFacade {
 
 	async getHouses(req: Request, res: Response) {
 		try {
-			const houses = await houseModel.find(
-				{ users: req.userId },
-				{
+			const houses = await houseModel
+				.find(
+					{ users: req.userId },
+					{
+						name: 1,
+						house_code: 1,
+						description: 1,
+						house_picture: 1,
+						address: 1,
+						users: 1,
+					},
+				)
+				.populate("users", {
+					_id: 0,
 					name: 1,
-					house_code: 1,
-					description: 1,
-					house_picture: 1,
-					address: 1,
-				},
-			);
+					profile_picture: 1,
+				});
+
 			return res.status(STATUS_CODES.OK).json(houses);
 		} catch (error) {
 			console.error(error);

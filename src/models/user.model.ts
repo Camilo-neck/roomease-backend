@@ -3,7 +3,9 @@ import mongoose from "mongoose";
 
 import { IUser } from "@/dtos/Iuser.dto";
 
-const userSchema = new mongoose.Schema(
+const Schema = mongoose.Schema;
+
+const userSchema = new Schema(
 	{
 		name: { type: String, required: true },
 		email: { type: String, required: true, unique: true },
@@ -12,10 +14,10 @@ const userSchema = new mongoose.Schema(
 		phone: { type: String, required: true },
 		description: { type: String, required: true },
 		profile_picture: { type: String, required: false },
-		tags: { type: [String], required: false },
-		scores: { type: [String], required: true },
-		events: { type: [String], required: true },
-		houses: { type: [String], required: true },
+		tags: { type: [String], required: false }, //add ref later
+		scores: { type: [String], required: true }, //add ref later
+		events: { type: [String], required: true }, //add ref later
+		houses: { type: [String], required: true, ref: "House" },
 	},
 	{ timestamps: true },
 );
