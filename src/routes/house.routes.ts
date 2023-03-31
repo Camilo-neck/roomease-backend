@@ -33,7 +33,7 @@ router.delete(
 	houseController.delete,
 );
 router.get(
-	`${HOUSE_ROUTES.JOIN}/:houseId`,
+	`${HOUSE_ROUTES.JOIN}/:house_code`,
 	[Auth, HouseExist],
 	houseController.join,
 );
