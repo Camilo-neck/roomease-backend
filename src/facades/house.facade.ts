@@ -10,8 +10,6 @@ class HouseFacade {
 			const { name, description, house_picture, address, users, tags } =
 				req.body;
 
-			const user = await userModel.findById(req.userId);
-
 			if (name.includes("#")) {
 				return res
 					.status(STATUS_CODES.BAD_REQUEST)
@@ -37,12 +35,19 @@ class HouseFacade {
 			const house = new houseModel(houseData);
 			await house.save();
 
-			user?.houses.push(house._id.toString());
-			await user?.save();
+			await userModel.updateOne(
+				{ _id: req.userId },
+				{ $push: { houses: house._id.toString() } },
+			);
+
+			// const user = await userModel.findOne({ _id: req.userId });
+			// user?.houses.push(house._id.toString());
+			// await user?.save();
 
 			return res.status(STATUS_CODES.CREATED).json({
 				message: "House created successfully",
 				house_code,
+				_id: house._id.toString(),
 			});
 		} catch (error) {
 			console.error(error);
@@ -77,7 +82,30 @@ class HouseFacade {
 
 	async getById(req: Request, res: Response) {
 		try {
-			const house = req.house;
+			let house = undefined;
+
+			const isOwner = req.house.owner === req.userId;
+			if (!isOwner) {
+				house = await req.house.populate({
+					path: "users",
+					select: "name email",
+				});
+				//exclude pending users
+				const { pending_users, ...rest } = house._doc;
+				house = rest;
+			} else {
+				house = await req.house.populate([
+					{
+						path: "users",
+						select: "name email",
+					},
+					{
+						path: "pending_users",
+						select: "name email",
+					},
+				]);
+			}
+
 			return res.status(STATUS_CODES.OK).json(house);
 		} catch (error) {
 			console.error(error);
