@@ -9,13 +9,14 @@ async function houseExists(req: Request, res: Response, next: NextFunction) {
 		const { houseId, house_code } = req.params;
 		let house = undefined;
 
-		if (!Types.ObjectId.isValid(houseId)) {
-			return res
-				.status(STATUS_CODES.BAD_REQUEST)
-				.json({ message: "Invalid house id" });
-		}
+		console.log(houseId, house_code);
 
 		if (houseId) {
+			if (!Types.ObjectId.isValid(houseId)) {
+				return res
+					.status(STATUS_CODES.BAD_REQUEST)
+					.json({ message: "Invalid house id" });
+			}
 			house = await houseModel.findOne({ _id: houseId });
 		} else if (house_code) {
 			house = await houseModel.findOne({ house_code });
