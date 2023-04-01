@@ -1,4 +1,4 @@
-export interface IHouse extends Document {
+export interface IHouse {
 	name: string;
 	owner: string;
 	house_code: string;

@@ -17,7 +17,10 @@
     "typeRoots": ["@types", "./node_modules/@types"],
     "paths": {
       "@/*": ["./*"]
-    }
+    },
+    "lib": [
+      "ES2021.String"
+    ]
   },
   "include": ["src/**/*.ts"],
   "exclude": ["node_modules"],
