@@ -1,4 +1,5 @@
 import { NextFunction, Request, Response } from "express";
+import { Types } from "mongoose";
 
 import houseModel from "@/models/house.model";
 import { STATUS_CODES } from "@/utils/constants";
@@ -7,6 +8,12 @@ async function houseExists(req: Request, res: Response, next: NextFunction) {
 	try {
 		const { houseId, house_code } = req.params;
 		let house = undefined;
+
+		if (!Types.ObjectId.isValid(houseId)) {
+			return res
+				.status(STATUS_CODES.BAD_REQUEST)
+				.json({ message: "Invalid house id" });
+		}
 
 		if (houseId) {
 			house = await houseModel.findOne({ _id: houseId });
