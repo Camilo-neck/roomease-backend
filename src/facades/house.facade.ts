@@ -10,10 +10,10 @@ class HouseFacade {
 			const { name, description, house_picture, address, users, tags } =
 				req.body;
 
-			if (name.includes("#")) {
+			if (name.includes("_")) {
 				return res
 					.status(STATUS_CODES.BAD_REQUEST)
-					.json({ message: "Invalid name" });
+					.json({ message: "Invalid name, name can't contain '_'" });
 			}
 
 			users.push(req.userId);
@@ -120,10 +120,10 @@ class HouseFacade {
 			const { name, description, house_picture, address, tags } = req.body;
 			const house = req.house;
 
-			if (name.includes("#")) {
+			if (name.includes("_")) {
 				return res
 					.status(STATUS_CODES.BAD_REQUEST)
-					.json({ message: "Invalid name" });
+					.json({ message: "Invalid name, name can't contain '_'" });
 			}
 
 			if (name !== house.name) {
@@ -251,7 +251,9 @@ class HouseFacade {
 		let existingHouse;
 		do {
 			house_code =
-				name.replace(" ", "_") + "#" + Math.floor(1000 + Math.random() * 9000);
+				name.replaceAll(" ", "") +
+				"_" +
+				Math.floor(1000 + Math.random() * 9000);
 			existingHouse = await houseModel.findOne({ house_code });
 		} while (existingHouse);
 		return house_code;
