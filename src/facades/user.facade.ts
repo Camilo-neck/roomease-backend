@@ -60,11 +60,10 @@ class UserFacade {
 	}
 
 	async getInfo(req: Request, res: Response) {
+		console.log(req.params.id);
+
 		try {
-			const user = await userModel.find(
-				{ email: req.body.email },
-				{ password: 0 },
-			);
+			const user = await userModel.findById(req.params.id, { password: 0 });
 			if (!user)
 				return res.status(STATUS_CODES.NOT_FOUND).json("No user found");
 
