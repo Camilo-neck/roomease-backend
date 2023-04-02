@@ -34,4 +34,5 @@ export const USER_ROUTES = {
 	PROFILE: "/profile",
 	HOUSES: "/houses",
 	GET_INFO: "/getInfo/:id",
+	DELETE: "/delete",
 };

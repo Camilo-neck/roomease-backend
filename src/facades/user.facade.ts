@@ -73,6 +73,19 @@ class UserFacade {
 				.json({ message: "Internal server error" });
 		}
 	}
+
+	async delete(req: Request, res: Response) {
+		try {
+			const userId = req.body.userId;
+			await userModel.deleteOne({ _id: userId });
+			return res.status(STATUS_CODES.OK);
+		} catch (error) {
+			console.error(error);
+			return res
+				.status(STATUS_CODES.INTERNAL_ERROR)
+				.json({ message: "Internal server error" });
+		}
+	}
 }
 
 export default new UserFacade();

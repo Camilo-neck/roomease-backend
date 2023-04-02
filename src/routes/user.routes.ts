@@ -11,5 +11,6 @@ router.get(USER_ROUTES.LIST, Auth, userController.listUsers); //should be disabl
 router.get(USER_ROUTES.PROFILE, Auth, userController.profile);
 router.get(USER_ROUTES.HOUSES, Auth, userController.getHouses);
 router.get(USER_ROUTES.GET_INFO, Auth, userController.getUserInfo);
+router.post(USER_ROUTES.DELETE, Auth, userController.deleteUser);
 
 export default router;

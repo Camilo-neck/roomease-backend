@@ -18,6 +18,9 @@ class UserControler {
 	): Promise<Response | undefined> {
 		return userFacade.getInfo(req, res);
 	}
+	async deleteUser(req: Request, res: Response): Promise<Response | undefined> {
+		return userFacade.delete(req, res);
+	}
 }
 
 export default new UserControler();
