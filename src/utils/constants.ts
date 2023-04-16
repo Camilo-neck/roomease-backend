@@ -34,5 +34,19 @@ export const USER_ROUTES = {
 	PROFILE: "/profile",
 	HOUSES: "/houses",
 	GET_INFO: "/getInfo/:id",
+	UPDATE: "/update",
 	DELETE: "/delete",
+};
+
+export const TASK_ROUTES = {
+	PREFIX: "/task",
+
+	GET_BY_HOUSE: "/getByHouse",
+	GET_BY_USER: "/getByUser",
+	CREATE: "/create",
+	UPDATE: "/update",
+	DELETE: "/delete",
+	DONE: "/done",
+
+	LIST: "/list",
 };
