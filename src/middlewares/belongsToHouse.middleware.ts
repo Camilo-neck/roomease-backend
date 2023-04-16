@@ -6,8 +6,20 @@ import { STATUS_CODES } from "@/utils/constants";
 async function belongsToHouse(req: Request, res: Response, next: NextFunction) {
 	try {
 		const { houseId } = req.params;
+		const { house_id } = req.body;
 
-		const house = await houseModel.findOne({ _id: houseId, users: req.userId });
+		let house = undefined;
+
+		if (houseId) {
+			house = await houseModel.findOne({ _id: houseId, users: req.userId });
+		} else if (house_id) {
+			house = await houseModel.findOne({ _id: house_id, users: req.userId });
+		} else {
+			return res
+				.status(STATUS_CODES.BAD_REQUEST)
+				.json({ message: "Invalid request, house id missing" });
+		}
+
 		if (house) {
 			return next();
 		}
