@@ -8,7 +8,7 @@ export default (
 	res: Response,
 	next: NextFunction,
 ) => {
-	res
+	return res
 		.json({
 			error: err.message,
 		})

@@ -1,10 +1,10 @@
 import express from "express";
 
 import helloController from "@/controllers/hello.controller";
-import asyncHandler from "@/middlewares/asyncHandler.middleware";
+import asyncError from "@/middlewares/asyncError.middleware";
 
 const router = express.Router();
 
-router.get("/", asyncHandler(helloController.hello));
+router.get("/", asyncError(helloController.hello));
 
 export default router;

@@ -5,7 +5,6 @@ const createTaskSchema = Joi.object({
 	description: Joi.string().required(),
 	house_id: Joi.string().required(),
 	users_id: Joi.array().required(),
-	//should be ["LUNES", "MARTES", "MIERCOLES", "JUEVES", "VIERNES", "SABADO", "DOMINGO""]
 	days: Joi.array()
 		.items(
 			Joi.string().valid(

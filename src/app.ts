@@ -9,12 +9,6 @@ import helloRoutes from "@/routes/hello.routes";
 import houseRoutes from "@/routes/house.routes";
 import taskRoutes from "@/routes/task.routes";
 import userRoutes from "@/routes/user.routes";
-import {
-	AUTH_ROUTES,
-	HOUSE_ROUTES,
-	TASK_ROUTES,
-	USER_ROUTES,
-} from "@/utils/constants";
 
 export class App {
 	private readonly _app: Application;
@@ -32,10 +26,10 @@ export class App {
 		this._app.use(express.urlencoded({ extended: true }));
 
 		this._app.use("/", helloRoutes);
-		this._app.use(AUTH_ROUTES.PEFIX, authRoutes);
-		this._app.use(USER_ROUTES.PREFIX, userRoutes);
-		this._app.use(HOUSE_ROUTES.PREFIX, houseRoutes);
-		this._app.use(TASK_ROUTES.PREFIX, taskRoutes);
+		this._app.use("/", authRoutes);
+		this._app.use("/user", userRoutes);
+		this._app.use("/house", houseRoutes);
+		this._app.use("/task", taskRoutes);
 
 		this._app.use(errorMiddleware);
 	}

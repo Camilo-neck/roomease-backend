@@ -1,16 +1,15 @@
 import express from "express";
 
 import { Auth } from "@/middlewares/auth.middleware";
-import { USER_ROUTES } from "@/utils/constants";
 
 import userController from "../controllers/user.controller";
 
 const router = express.Router();
 
-router.get(USER_ROUTES.LIST, Auth, userController.listUsers); //should be disabled
-router.get(USER_ROUTES.PROFILE, Auth, userController.profile);
-router.get(USER_ROUTES.HOUSES, Auth, userController.getHouses);
-router.get(USER_ROUTES.GET_INFO, Auth, userController.getUserInfo);
-router.post(USER_ROUTES.DELETE, Auth, userController.deleteUser);
+router.get("/list", Auth, userController.listUsers); //should be disabled
+router.get("/profile", Auth, userController.profile);
+router.get("/houses", Auth, userController.getHouses);
+router.get("/getInfo/:id", Auth, userController.getUserInfo);
+router.delete("/delete", Auth, userController.deleteUser);
 
 export default router;
