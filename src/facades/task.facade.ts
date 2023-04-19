@@ -36,7 +36,15 @@ class TaskFacade {
 		taskData["done"] = false;
 
 		const task = new taskModel(taskData);
+
 		await task.save();
+
+		const u = await userModel.find({ _id: { $in: taskData.users_id } });
+
+		u.forEach((user) => {
+			user.events.push(task._id.toString());
+			user.save();
+		});
 
 		return res.status(STATUS_CODES.CREATED).json({
 			message: "Task created successfully",
