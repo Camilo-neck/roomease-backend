@@ -58,6 +58,21 @@ class TaskFacade {
 
 	public async delete(req: Request, res: Response): Promise<Response | undefined> {
 		const taskId: string = req.params.id;
+
+		const task = await taskModel.findById(taskId);
+		if (!task) {
+			return res.status(404).json({ message: "Task not found" });
+		}
+		const u_ids = task.users_id;
+
+		const u = await userModel.find({ _id: { $in: u_ids } });
+
+		u.forEach((user) => {
+			const newEvents = user.events.filter((event) => event !== taskId);
+			user.events = newEvents;
+			user.save();
+		});
+
 		await taskModel.deleteOne({ _id: taskId });
 		return res.status(STATUS_CODES.OK).json({ message: "Task deleted" });
 	}
