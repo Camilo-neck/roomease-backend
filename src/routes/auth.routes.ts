@@ -15,6 +15,6 @@ router.post(
 	SchemaValidator(registerSchema),
 	authController.register,
 );
-router.post("login", SchemaValidator(loginSchema), authController.login);
+router.post("/login", SchemaValidator(loginSchema), authController.login);
 
 export default router;
