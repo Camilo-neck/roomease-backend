@@ -2,7 +2,7 @@ import "dotenv/config";
 
 import { App } from "@/app";
 
-import dbConnect from "./dbConnect";
+import dbConnect from "./db/dbConnect";
 
 // Create a new express application instance
 const app = new App();
