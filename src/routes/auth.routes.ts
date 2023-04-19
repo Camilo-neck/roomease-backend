@@ -8,7 +8,11 @@ import { loginSchema, registerSchema } from "../utils/RouteSchemas/authRouteSche
 
 const router = express.Router();
 
-router.post("/register", SchemaValidator(registerSchema), asyncError(authController.register));
-router.post("/login", SchemaValidator(loginSchema), asyncError(authController.login));
+router.post(
+	"/register",
+	SchemaValidator(registerSchema),
+	authController.register,
+);
+router.post("/login", SchemaValidator(loginSchema), authController.login);
 
 export default router;
