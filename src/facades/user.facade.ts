@@ -45,6 +45,8 @@ class UserFacade {
 	public async delete(req: Request, res: Response): Promise<Response | undefined> {
 		const userId: string = req.params.id;
 		await userModel.deleteOne({ _id: userId });
+		
+		await houseModel.updateMany({ $pull: { users: userId } });
 		return res.status(STATUS_CODES.OK).json({ message: "User deleted" });
 	}
 }
