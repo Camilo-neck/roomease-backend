@@ -31,6 +31,7 @@ class TaskFacade {
 		}
 
 		const taskData = req.body;
+		taskData["house_id"] = house._id;
 		taskData["created_by"] = req.userId;
 		taskData["done"] = false;
 
@@ -48,8 +49,9 @@ class TaskFacade {
 	}
 
 	public async delete(req: Request, res: Response): Promise<Response | undefined> {
-		// pass
-		return res.status(STATUS_CODES.NO_CONTENT).json({ message: "No content" });
+		const taskId: string = req.params.id;
+		await taskModel.deleteOne({ _id: taskId });
+		return res.status(STATUS_CODES.OK).json({ message: "Task deleted" });
 	}
 
 	public async done(req: Request, res: Response): Promise<Response | undefined> {
