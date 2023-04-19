@@ -1,22 +1,12 @@
 import Joi from "joi";
 
-const createTaskSchema = Joi.object({
+const createTaskSchema: Joi.ObjectSchema = Joi.object({
 	name: Joi.string().required(),
 	description: Joi.string().required(),
 	house_id: Joi.string().required(),
 	users_id: Joi.array().required(),
 	days: Joi.array()
-		.items(
-			Joi.string().valid(
-				"LUNES",
-				"MARTES",
-				"MIERCOLES",
-				"JUEVES",
-				"VIERNES",
-				"SABADO",
-				"DOMINGO",
-			),
-		)
+		.items(Joi.string().valid("LUNES", "MARTES", "MIERCOLES", "JUEVES", "VIERNES", "SABADO", "DOMINGO"))
 		.required(),
 	hours: Joi.object({
 		start: Joi.string()

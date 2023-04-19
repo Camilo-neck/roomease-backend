@@ -3,12 +3,11 @@ import { Request, Response } from "express";
 import authFacade from "@/facades/auth.facade";
 
 class AuthControler {
-	//use facade to handle the logic
-	async register(req: Request, res: Response) {
+	public async register(req: Request, res: Response): Promise<Response | undefined> {
 		return authFacade.register(req, res);
 	}
 
-	async login(req: Request, res: Response) {
+	public async login(req: Request, res: Response): Promise<Response | undefined> {
 		return authFacade.login(req, res);
 	}
 }

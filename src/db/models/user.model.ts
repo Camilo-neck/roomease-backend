@@ -22,16 +22,12 @@ const userSchema = new Schema(
 	{ timestamps: true },
 );
 
-userSchema.methods.encryptPassword = async (
-	password: string,
-): Promise<string> => {
+userSchema.methods.encryptPassword = async (password: string): Promise<string> => {
 	const salt = await bcrypt.genSalt(10);
 	return bcrypt.hash(password, salt);
 };
 
-userSchema.methods.validatePassword = async function (
-	password: string,
-): Promise<boolean> {
+userSchema.methods.validatePassword = async function (password: string): Promise<boolean> {
 	return await bcrypt.compare(password, this.password);
 };
 

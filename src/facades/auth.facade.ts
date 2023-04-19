@@ -1,103 +1,51 @@
 import { Request, Response } from "express";
 import jwt from "jsonwebtoken";
+import { ObjectId } from "mongodb";
 
+import { ServerError } from "@/errors/server.error";
 import { STATUS_CODES } from "@/utils/constants";
 
-import userModel from "../models/user.model";
+import userModel from "../db/models/user.model";
 
 class AuthFacade {
-	async register(req: Request, res: Response) {
-		try {
-			const {
-				name,
-				email,
-				password,
-				birth_date,
-				phone,
-				description,
-				tags,
-				// profile_picture,
-			} = req.body;
+	public async register(req: Request, res: Response): Promise<Response | undefined> {
+		const { name, email, password, birth_date, phone, description, tags } = req.body;
 
-			// Check if a user with the same email already exists
-			const existingUser = await userModel.findOne({ email });
-			if (existingUser) {
-				return res.status(409).json({ message: "User already exists" });
-			}
+		// Check if a user with the same email already exists
+		const existingUser = await userModel.findOne({ email });
+		if (existingUser) throw new ServerError("User already exists", STATUS_CODES.BAD_REQUEST);
 
-			const user = new userModel({
-				name,
-				email,
-				password,
-				birth_date,
-				phone,
-				description,
-				tags,
-				// profile_picture,
-			});
-			user.password = await user.encryptPassword(password);
-			const savedUser = await user.save();
+		const user = new userModel({ name, email, password, birth_date, phone, description, tags });
+		user.password = await user.encryptPassword(password);
+		const savedUser = await user.save();
 
-			//token
-			const token: string = jwt.sign(
-				{ _id: savedUser._id },
-				process.env.TOKEN_SECRET || "S26ZNvgSv4",
-			);
+		//token
+		const token: string = generateToken(user._id);
 
-			//save token in client side cookie with same duration as token
-			res.cookie("token", token, {
-				httpOnly: true,
-				secure: true,
-				sameSite: "none",
-				maxAge: 1000 * 60 * 30,
-			});
-
-			res.header("auth-token", token).status(STATUS_CODES.CREATED).json({
-				message: "User created successfully",
-			});
-		} catch (error) {
-			console.error(error);
-			res
-				.status(STATUS_CODES.INTERNAL_ERROR)
-				.json({ message: "Internal server error" });
-		}
+		return res.header("auth-token", token).status(STATUS_CODES.CREATED).json({
+			message: "User created successfully",
+		});
 	}
 
-	async login(req: Request, res: Response) {
-		try {
-			const user = await userModel.findOne({ email: req.body.email });
-			if (!user)
-				return res.status(STATUS_CODES.BAD_REQUEST).json({
-					message: "Email or password is wrong",
-				});
+	public async login(req: Request, res: Response): Promise<Response | undefined> {
+		const user = await userModel.findOne({ email: req.body.email });
+		if (!user) throw new ServerError("Wrong Email", STATUS_CODES.BAD_REQUEST);
 
-			const correctPassword: boolean = await user.validatePassword(
-				req.body.password,
-			);
-			if (!correctPassword)
-				return res.status(STATUS_CODES.BAD_REQUEST).json({
-					message: "Email or password is wrong",
-				});
+		const correctPassword: boolean = await user.validatePassword(req.body.password);
+		if (!correctPassword) throw new ServerError("Wrong password", STATUS_CODES.BAD_REQUEST);
 
-			//token
-			const token: string = jwt.sign(
-				{ _id: user._id },
-				process.env.TOKEN_SECRET || "S26ZNvgSv4",
-				{
-					//expires in 30 min
-					expiresIn: "30m",
-				},
-			);
-			// add a new header to the response
-			res.setHeader("Access-Control-Expose-Headers", "auth-token");
-			res.header("auth-token", token).status(STATUS_CODES.CREATED).json(user);
-		} catch (error) {
-			console.error(error);
-			res
-				.status(STATUS_CODES.INTERNAL_ERROR)
-				.json({ message: "Internal server error" });
-		}
+		//token
+		const token: string = generateToken(user._id);
+
+		// add token to response header
+		res.setHeader("Access-Control-Expose-Headers", "auth-token");
+		return res.header("auth-token", token).status(STATUS_CODES.CREATED).json(user);
 	}
+}
+
+function generateToken(user_id: ObjectId): string {
+	const token = jwt.sign({ _id: user_id }, process.env.TOKEN_SECRET || "S26ZNvgSv4");
+	return token;
 }
 
 export default new AuthFacade();
