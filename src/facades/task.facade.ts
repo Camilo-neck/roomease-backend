@@ -62,7 +62,7 @@ class TaskFacade {
 		const task = await taskModel.findById(taskId);
 		if (!task) {
 			return res.status(404).json({ message: "Task not found" });
-		}  
+		}
 
 		await taskModel.deleteOne({ _id: taskId });
 		await userModel.updateMany({ $pull: { events: taskId } });
