@@ -9,14 +9,11 @@ import taskModel from "../db/models/task.model";
 import userModel from "../db/models/user.model";
 
 class TaskFacade {
-	public async getByHouse(req: Request, res: Response): Promise<Response> {
+	public async get(req: Request, res: Response): Promise<Response> {
 		// pass
 		return res.status(STATUS_CODES.NO_CONTENT).json({ message: "No content" });
 	}
-	public async getByUser(req: Request, res: Response): Promise<Response> {
-		// pass
-		return res.status(STATUS_CODES.NO_CONTENT).json({ message: "No content" });
-	}
+
 	public async create(req: Request, res: Response): Promise<Response | undefined> {
 		const { users_id } = req.body;
 

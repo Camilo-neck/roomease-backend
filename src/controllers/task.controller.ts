@@ -3,11 +3,8 @@ import { Request, Response } from "express";
 import taskFacade from "@/facades/task.facade";
 
 class TaskController {
-	public async getByHouse(req: Request, res: Response): Promise<Response | undefined> {
-		return taskFacade.getByHouse(req, res);
-	}
-	public async getByUser(req: Request, res: Response): Promise<Response | undefined> {
-		return taskFacade.getByUser(req, res);
+	public async get(req: Request, res: Response): Promise<Response | undefined> {
+		return taskFacade.get(req, res);
 	}
 	public async create(req: Request, res: Response): Promise<Response | undefined> {
 		return taskFacade.create(req, res);
