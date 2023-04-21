@@ -40,7 +40,12 @@ class TaskFacade {
 
 		await task.save();
 
-		userModel.updateMany({ _id: { $in: users_id } }, { $push: { tasks: task._id.toString() } });
+		users.forEach((user) => {
+			user.tasks.push(task._id.toString());
+			user.save();
+		});
+
+		//userModel.updateMany({ _id: { $in: users_id } }, { $push: { tasks: task._id.toString() } });
 
 		return res.status(STATUS_CODES.CREATED).json({
 			message: "Task created successfully",
