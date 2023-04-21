@@ -1,4 +1,5 @@
 import { Request, Response } from "express";
+import jwt from "jsonwebtoken";
 
 import { ServerError } from "@/errors/server.error";
 import { STATUS_CODES } from "@/utils/constants";
@@ -58,13 +59,21 @@ class TaskFacade {
 
 	public async delete(req: Request, res: Response): Promise<Response | undefined> {
 		const taskId: string = req.params.id;
+		const userId = req.userId;
 
 		const task = await taskModel.findById(taskId);
 		if (!task) {
 			return res.status(404).json({ message: "Task not found" });
 		}
 
-		await taskModel.deleteOne({ _id: taskId });
+		const user = await userModel.findById(userId);
+		if (!user) {
+			return res.status(404).json({ message: "User not found" });
+		}
+		if (!user.tasks.includes(taskId)) {
+			return res.status(404).json({ message: "The user does not have that task." });
+		}
+		await taskModel.findByIdAndDelete(taskId);
 		await userModel.updateMany({ $pull: { tasks: taskId } });
 		return res.status(STATUS_CODES.OK).json({ message: "Task deleted" });
 	}
