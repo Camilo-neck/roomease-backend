@@ -31,11 +31,20 @@ class TaskFacade {
 		}
 
 		const taskData = req.body;
+		taskData["house_id"] = house._id;
 		taskData["created_by"] = req.userId;
 		taskData["done"] = false;
 
 		const task = new taskModel(taskData);
+
 		await task.save();
+
+		const u = await userModel.find({ _id: { $in: taskData.users_id } });
+
+		u.forEach((user) => {
+			user.events.push(task._id.toString());
+			user.save();
+		});
 
 		return res.status(STATUS_CODES.CREATED).json({
 			message: "Task created successfully",
@@ -48,8 +57,16 @@ class TaskFacade {
 	}
 
 	public async delete(req: Request, res: Response): Promise<Response | undefined> {
-		// pass
-		return res.status(STATUS_CODES.NO_CONTENT).json({ message: "No content" });
+		const taskId: string = req.params.id;
+
+		const task = await taskModel.findById(taskId);
+		if (!task) {
+			return res.status(404).json({ message: "Task not found" });
+		}
+
+		await taskModel.deleteOne({ _id: taskId });
+		await userModel.updateMany({ $pull: { events: taskId } });
+		return res.status(STATUS_CODES.OK).json({ message: "Task deleted" });
 	}
 
 	public async done(req: Request, res: Response): Promise<Response | undefined> {
