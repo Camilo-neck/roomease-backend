@@ -1,5 +1,6 @@
 import { Request, Response } from "express";
 
+import { ServerError } from "@/errors/server.error";
 import { STATUS_CODES } from "@/utils/constants";
 
 import houseModel from "../db/models/house.model";
@@ -21,17 +22,16 @@ class TaskFacade {
 		//check if users exist
 		const users = await userModel.find({ _id: { $in: users_id } });
 		if (users.length !== users_id.length) {
-			throw new Error("Invalid users, one or more users does not exist");
+			throw new ServerError("Invalid users, one or more users does not exist", STATUS_CODES.BAD_REQUEST);
 		}
 
 		//check if users belong to the house
 		const house = req.house;
 		if (!users_id.every((user_id: string) => house.users.includes(user_id))) {
-			throw new Error("Invalid users, one or more users does not belong to the house");
+			throw new ServerError("Invalid users, one or more users does not belong to the house", STATUS_CODES.BAD_REQUEST);
 		}
 
 		const taskData = req.body;
-		taskData["house_id"] = house._id;
 		taskData["created_by"] = req.userId;
 		taskData["done"] = false;
 
@@ -39,12 +39,12 @@ class TaskFacade {
 
 		await task.save();
 
-		const u = await userModel.find({ _id: { $in: taskData.users_id } });
-
-		u.forEach((user) => {
-			user.events.push(task._id.toString());
+		users.forEach((user) => {
+			user.tasks.push(task._id.toString());
 			user.save();
 		});
+
+		// userModel.updateMany({ _id: { $in: users_id } }, { $push: { tasks: task._id.toString() } });
 
 		return res.status(STATUS_CODES.CREATED).json({
 			message: "Task created successfully",
@@ -65,7 +65,7 @@ class TaskFacade {
 		}
 
 		await taskModel.deleteOne({ _id: taskId });
-		await userModel.updateMany({ $pull: { events: taskId } });
+		await userModel.updateMany({ $pull: { tasks: taskId } });
 		return res.status(STATUS_CODES.OK).json({ message: "Task deleted" });
 	}
 

@@ -16,7 +16,7 @@ const userSchema = new Schema(
 		profile_picture: { type: String, required: false },
 		tags: { type: [String], required: false }, //add ref later
 		scores: { type: [String], required: true }, //add ref later
-		events: { type: [String], required: true }, //add ref later
+		tasks: { type: [String], required: true }, //add ref later
 		houses: { type: [String], required: true, ref: "House" },
 	},
 	{ timestamps: true },

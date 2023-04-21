@@ -8,7 +8,7 @@ export interface IUser {
 	profile_picture: string;
 	tags: string[];
 	scores: string[];
-	events: string[];
+	tasks: string[];
 	houses: string[];
 	encryptPassword(password: string): Promise<string>;
 	validatePassword(password: string): Promise<boolean>;
