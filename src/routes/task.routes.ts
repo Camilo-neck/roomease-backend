@@ -12,7 +12,7 @@ import asyncError from "../middlewares/asyncError.middleware";
 const router = express.Router();
 
 router.get("/getByHouse", [Auth, HouseExist, BelongsToHouse], asyncError(taskController.getByHouse));
-router.get("/getByUser", Auth, taskController.getByUser);
+router.get("/getByUser", Auth, asyncError(taskController.getByUser));
 router.post(
 	"/create",
 	[SchemaValidator(createTaskSchema), Auth, HouseExist, BelongsToHouse],
