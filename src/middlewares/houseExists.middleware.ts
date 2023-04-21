@@ -5,25 +5,23 @@ import houseModel from "@/db/models/house.model";
 import { STATUS_CODES } from "@/utils/constants";
 
 async function houseExists(req: Request, res: Response, next: NextFunction) {
-	const { houseId, house_code } = req.params;
-	const { house_id } = req.body;
+	let house_ids = [req.params.houseId, req.body.house_id, req.params.house_code, req.query.house_id];
 
-	let house = undefined;
+	house_ids = house_ids.filter(function (element) {
+		return element !== undefined;
+	});
 
-	console.log(houseId, house_code, house_id);
+	if (house_ids.length > 1) {
+		return res.status(STATUS_CODES.BAD_REQUEST).json({ message: "Invalid request, more than one house id sent" });
+	}
 
-	if (houseId) {
-		if (!Types.ObjectId.isValid(houseId)) {
-			return res.status(STATUS_CODES.BAD_REQUEST).json({ message: "Invalid house id" });
-		}
-		house = await houseModel.findOne({ _id: houseId });
-	} else if (house_code) {
-		house = await houseModel.findOne({ house_code });
-	} else if (house_id) {
-		house = await houseModel.findOne({ _id: house_id });
-	} else {
+	if (house_ids.length == 0) {
 		return res.status(STATUS_CODES.BAD_REQUEST).json({ message: "Invalid request, house id missing" });
 	}
+
+	const house_id = house_ids[0];
+
+	const house = await get_house(house_id);
 
 	if (!house) {
 		return res.status(STATUS_CODES.NOT_FOUND).json({ message: "House not found" });
@@ -36,3 +34,12 @@ async function houseExists(req: Request, res: Response, next: NextFunction) {
 export const HouseExist = (req: Request, res: Response, next: NextFunction) => {
 	return Promise.resolve(houseExists(req, res, next)).catch(next);
 };
+
+async function get_house(identifier: string) {
+	let house = undefined;
+	if (Types.ObjectId.isValid(identifier)) {
+		house = await houseModel.findOne({ _id: identifier });
+	} else house = await houseModel.findOne({ house_code: identifier });
+
+	return house;
+}
