@@ -114,10 +114,10 @@ class TaskFacade {
 		if (!user.tasks.includes(taskId)) {
 			return res.status(404).json({ message: "The user does not have that task." });
 		}
-		task.done = true;
+		task.done = !task.done;
 		task.save();
 
-		return res.status(STATUS_CODES.OK).json({ message: "Task marked as done" });
+		return res.status(STATUS_CODES.OK).json({ message: "Task marked as done/not done" });
 	}
 
 	public async list(req: Request, res: Response): Promise<Response | undefined> {
