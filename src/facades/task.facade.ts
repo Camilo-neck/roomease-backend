@@ -58,16 +58,23 @@ class TaskFacade {
 		});
 	}
 	public async update(req: Request, res: Response): Promise<Response | undefined> {
-	
 		const { id } = req.params;
-        const updateTask = req.body;
-        const task = await taskModel.findByIdAndUpdate(id, updateTask, { new: true });
-        
-        if (!task) {
-            return res.status(404).json({ message: "Task not found" });
-        }
+		const updateTask = req.body;
+		const task = await taskModel.findByIdAndUpdate(id, updateTask, { new: true });
 
-        return res.status(STATUS_CODES.OK).json({ message: "Task updated", task });
+		if (!task) {
+			return res.status(404).json({ message: "Task not found" });
+		}
+
+		//Modificar lista de tareas de los usuarios
+		await userModel.updateMany({ $pull: { tasks: id } });
+		const users = await userModel.find({ _id: { $in: task.users_id } });
+		users.forEach((user) => {
+			user.tasks.push(task._id.toString());
+			user.save();
+		});
+
+		return res.status(STATUS_CODES.OK).json({ message: "Task updated", task });
 	}
 
 	public async delete(req: Request, res: Response): Promise<Response | undefined> {

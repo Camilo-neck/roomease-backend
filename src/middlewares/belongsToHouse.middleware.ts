@@ -5,7 +5,7 @@ import { STATUS_CODES } from "@/utils/constants";
 
 async function belongsToHouse(req: Request, res: Response, next: NextFunction) {
 	let house = undefined;
-	const user_id = req.userId
+	const user_id = req.userId;
 
 	if (req.params.houseId) {
 		house = await houseModel.findOne({ _id: req.params.houseId, users: user_id });
