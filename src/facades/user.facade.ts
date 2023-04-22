@@ -42,6 +42,19 @@ class UserFacade {
 		return res.status(STATUS_CODES.OK).json(user);
 	}
 
+	public async update(req: Request, res: Response): Promise<Response | undefined> {
+		const { id } = req.params;
+    	const updatedUser = await userModel.findByIdAndUpdate(id, req.body, { new: true, });
+
+		if (!updatedUser) {
+		return res.status(STATUS_CODES.NOT_FOUND).json({
+			message: "User not found",
+		});
+		}
+
+    	return res.status(STATUS_CODES.OK).json({message: "User updated", updatedUser});
+	}
+
 	public async delete(req: Request, res: Response): Promise<Response | undefined> {
 		const userId: string = req.params.id;
 		await userModel.deleteOne({ _id: userId });

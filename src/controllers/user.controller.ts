@@ -15,6 +15,9 @@ class UserControler {
 	public async getUserInfo(req: Request, res: Response): Promise<Response | undefined> {
 		return userFacade.getInfo(req, res);
 	}
+	public async updateUser(req: Request, res: Response): Promise<Response | undefined> {
+		return userFacade.update(req, res);
+	}
 	public async deleteUser(req: Request, res: Response): Promise<Response | undefined> {
 		return userFacade.delete(req, res);
 	}
