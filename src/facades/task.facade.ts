@@ -10,8 +10,16 @@ import userModel from "../db/models/user.model";
 
 class TaskFacade {
 	public async get(req: Request, res: Response): Promise<Response> {
-		// pass
-		return res.status(STATUS_CODES.NO_CONTENT).json({ message: "No content" });
+		const { user_id, house_id } = req.query;
+		let task = undefined;
+
+		if (user_id === undefined) {
+			task = await taskModel.find({ house_id: house_id });
+		} else {
+			task = await taskModel.find({ house_id: house_id, users_id: user_id });
+		}
+
+		return res.status(STATUS_CODES.OK).json(task);
 	}
 
 	public async create(req: Request, res: Response): Promise<Response | undefined> {
