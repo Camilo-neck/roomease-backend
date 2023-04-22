@@ -50,8 +50,16 @@ class TaskFacade {
 		});
 	}
 	public async update(req: Request, res: Response): Promise<Response | undefined> {
-		// pass
-		return res.status(STATUS_CODES.NO_CONTENT).json({ message: "No content" });
+	
+		const { id } = req.params;
+        const updateTask = req.body;
+        const task = await taskModel.findByIdAndUpdate(id, updateTask, { new: true });
+        
+        if (!task) {
+            return res.status(404).json({ message: "Task not found" });
+        }
+
+        return res.status(STATUS_CODES.OK).json({ message: "Task updated", task });
 	}
 
 	public async delete(req: Request, res: Response): Promise<Response | undefined> {
@@ -95,7 +103,6 @@ class TaskFacade {
 		task.save();
 
 		return res.status(STATUS_CODES.OK).json({ message: "Task marked as done" });
-		return res.status(STATUS_CODES.NO_CONTENT).json({ message: "No content" });
 	}
 
 	public async list(req: Request, res: Response): Promise<Response | undefined> {
