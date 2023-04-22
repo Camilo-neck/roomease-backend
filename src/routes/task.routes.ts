@@ -17,9 +17,9 @@ router.post(
 	[SchemaValidator(createTaskSchema), Auth, HouseExist, BelongsToHouse],
 	asyncError(taskController.create),
 );
-router.post("/update", Auth, asyncError(taskController.update));
+router.put("/update/:id", Auth, asyncError(taskController.update));
 router.delete("/delete/:id", Auth, asyncError(taskController.delete));
-router.post("/done", Auth, asyncError(taskController.done));
+router.put("/done/:id", Auth, asyncError(taskController.done));
 
 router.get("/list", Auth, asyncError(taskController.list));
 

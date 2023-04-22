@@ -58,8 +58,16 @@ class TaskFacade {
 		});
 	}
 	public async update(req: Request, res: Response): Promise<Response | undefined> {
-		// pass
-		return res.status(STATUS_CODES.NO_CONTENT).json({ message: "No content" });
+	
+		const { id } = req.params;
+        const updateTask = req.body;
+        const task = await taskModel.findByIdAndUpdate(id, updateTask, { new: true });
+        
+        if (!task) {
+            return res.status(404).json({ message: "Task not found" });
+        }
+
+        return res.status(STATUS_CODES.OK).json({ message: "Task updated", task });
 	}
 
 	public async delete(req: Request, res: Response): Promise<Response | undefined> {
@@ -84,8 +92,25 @@ class TaskFacade {
 	}
 
 	public async done(req: Request, res: Response): Promise<Response | undefined> {
-		// pass
-		return res.status(STATUS_CODES.NO_CONTENT).json({ message: "No content" });
+		const taskId: string = req.params.id;
+		const userId = req.userId;
+
+		const task = await taskModel.findById(taskId);
+		if (!task) {
+			return res.status(404).json({ message: "Task not found" });
+		}
+
+		const user = await userModel.findById(userId);
+		if (!user) {
+			return res.status(404).json({ message: "User not found" });
+		}
+		if (!user.tasks.includes(taskId)) {
+			return res.status(404).json({ message: "The user does not have that task." });
+		}
+		task.done = true;
+		task.save();
+
+		return res.status(STATUS_CODES.OK).json({ message: "Task marked as done" });
 	}
 
 	public async list(req: Request, res: Response): Promise<Response | undefined> {
