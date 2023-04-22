@@ -76,7 +76,25 @@ class TaskFacade {
 	}
 
 	public async done(req: Request, res: Response): Promise<Response | undefined> {
-		// pass
+		const taskId: string = req.params.id;
+		const userId = req.userId;
+
+		const task = await taskModel.findById(taskId);
+		if (!task) {
+			return res.status(404).json({ message: "Task not found" });
+		}
+
+		const user = await userModel.findById(userId);
+		if (!user) {
+			return res.status(404).json({ message: "User not found" });
+		}
+		if (!user.tasks.includes(taskId)) {
+			return res.status(404).json({ message: "The user does not have that task." });
+		}
+		task.done = true;
+		task.save();
+
+		return res.status(STATUS_CODES.OK).json({ message: "Task marked as done" });
 		return res.status(STATUS_CODES.NO_CONTENT).json({ message: "No content" });
 	}
 

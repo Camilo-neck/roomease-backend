@@ -19,7 +19,7 @@ router.post(
 );
 router.post("/update", Auth, asyncError(taskController.update));
 router.delete("/delete/:id", Auth, asyncError(taskController.delete));
-router.post("/done", Auth, asyncError(taskController.done));
+router.post("/done/:id", Auth, asyncError(taskController.done));
 
 router.get("/list", Auth, asyncError(taskController.list));
 
