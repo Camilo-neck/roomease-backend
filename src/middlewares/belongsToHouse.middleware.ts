@@ -5,13 +5,14 @@ import { STATUS_CODES } from "@/utils/constants";
 
 async function belongsToHouse(req: Request, res: Response, next: NextFunction) {
 	let house = undefined;
+	const user_id = req.userId
 
 	if (req.params.houseId) {
-		house = await houseModel.findOne({ _id: req.params.houseId, users: req.userId });
+		house = await houseModel.findOne({ _id: req.params.houseId, users: user_id });
 	} else if (req.body.house_id) {
-		house = await houseModel.findOne({ _id: req.body.house_id, users: req.userId });
+		house = await houseModel.findOne({ _id: req.body.house_id, users: user_id });
 	} else if (req.query.house_id) {
-		house = await houseModel.findOne({ _id: req.query.house_id, users: req.userId });
+		house = await houseModel.findOne({ _id: req.query.house_id, users: user_id });
 	} else {
 		return res.status(STATUS_CODES.BAD_REQUEST).json({ message: "Invalid request, house id missing" });
 	}
