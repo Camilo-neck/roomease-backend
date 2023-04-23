@@ -116,9 +116,9 @@ async function validate_task(task_id: string, user_id: string): Promise<any> {
 		throw new ServerError("Task not found", STATUS_CODES.BAD_REQUEST);
 	}
 
-	// if (!user?.tasks.includes(task_id)) {
-	// 	throw new ServerError("The user does not have that task.", STATUS_CODES.BAD_REQUEST);
-	// }
+	if (!user?.tasks.includes(task_id)) {
+		throw new ServerError("The user does not have that task.", STATUS_CODES.BAD_REQUEST);
+	}
 
 	return task;
 }
