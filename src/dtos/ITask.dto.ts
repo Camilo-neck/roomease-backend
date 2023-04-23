@@ -6,9 +6,9 @@ export interface ITask {
 	done: boolean;
 	crated_by: string;
 
-	days: string[];
+	days?: string[];
 	start_date: Date;
 	end_date: Date;
 	repeat: boolean;
-	until_date: Date;
+	until_date?: Date;
 }
