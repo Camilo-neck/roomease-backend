@@ -4,6 +4,7 @@ import { ServerError } from "@/errors/server.error";
 import { STATUS_CODES } from "@/utils/constants";
 
 import houseModel from "../db/models/house.model";
+import taskModel from "../db/models/task.model";
 import userModel from "../db/models/user.model";
 
 class UserFacade {
@@ -60,6 +61,7 @@ class UserFacade {
 		await userModel.deleteOne({ _id: userId });
 
 		await houseModel.updateMany({ $pull: { users: userId } });
+		await taskModel.updateMany({ $pull: { users: userId } });
 		return res.status(STATUS_CODES.OK).json({ message: "User deleted" });
 	}
 }

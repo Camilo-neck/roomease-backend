@@ -5,6 +5,8 @@ import userModel from "@/db/models/user.model";
 import { ServerError } from "@/errors/server.error";
 import { STATUS_CODES } from "@/utils/constants";
 
+import taskModel from "../db/models/task.model";
+
 class HouseFacade {
 	public async create(req: Request, res: Response): Promise<Response | undefined> {
 		const { name, users } = req.body;
@@ -67,6 +69,7 @@ class HouseFacade {
 		const { houseId } = req.params;
 		await houseModel.deleteOne({ _id: houseId });
 		await userModel.updateMany({ $pull: { houses: houseId } });
+		await taskModel.deleteMany({ house_id: houseId });
 
 		return res.status(STATUS_CODES.OK).json({ message: "House deleted" });
 	}
