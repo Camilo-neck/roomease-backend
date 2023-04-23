@@ -13,13 +13,10 @@ const taskSchema = new Schema(
 		done: { type: Boolean, required: true },
 		created_by: { type: String, required: true, ref: "User" },
 		days: { type: [String], required: true },
-		hours: {
-			start: { type: String, required: true },
-			end: { type: String, required: true },
-		},
+		start_date: { type: Date, required: true },
+		end_date: { type: Date, required: true },
 		repeat: { type: Boolean, required: true },
-		from_date: { type: Date, required: true },
-		to_date: { type: Date, required: true },
+		until_date: { type: Date, required: true },
 	},
 	{ timestamps: true },
 );

@@ -7,11 +7,8 @@ export interface ITask {
 	crated_by: string;
 
 	days: string[];
-	hours: {
-		start: string;
-		end: string;
-	};
+	start_date: Date;
+	end_date: Date;
 	repeat: boolean;
-	from_date: Date;
-	to_date: Date;
+	until_date: Date;
 }
