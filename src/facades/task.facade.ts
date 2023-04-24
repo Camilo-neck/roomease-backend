@@ -29,6 +29,10 @@ class TaskFacade {
 		taskData["created_by"] = req.userId;
 		taskData["done"] = false;
 
+		if (!taskData.until_date) {
+			taskData["until_date"] = taskData.end_date;
+		}
+
 		const task = new taskModel(taskData);
 
 		await task.save();
