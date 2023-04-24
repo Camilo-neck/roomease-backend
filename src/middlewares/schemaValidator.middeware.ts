@@ -2,11 +2,8 @@ import { NextFunction, Request, Response } from "express";
 import { ObjectSchema } from "joi";
 
 import { STATUS_CODES } from "@/utils/constants";
-import { FIELD_TYPES } from "@/utils/constants";
 
-type RequestType = "body" | "query" | "params";
-
-export const SchemaValidator = (schema: ObjectSchema, type: RequestType): ((...args: any[]) => any) => {
+export const SchemaValidator = (schema: ObjectSchema): ((...args: any[]) => any) => {
 	return (req: Request, res: Response, next: NextFunction) => {
 		const requestObject = type === "body" ? req.body : type === "query" ? req.query : req.params;
 		const { error } = schema.validate(requestObject);
