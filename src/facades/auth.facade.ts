@@ -17,7 +17,7 @@ class AuthFacade {
 
 		const user = new userModel({ name, email, password, birth_date, phone, description, tags });
 		user.password = await user.encryptPassword(password);
-		const savedUser = await user.save();
+		await user.save();
 
 		//token
 		const token: string = generateToken(user._id);
