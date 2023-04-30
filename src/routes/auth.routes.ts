@@ -10,5 +10,6 @@ const router = express.Router();
 
 router.post("/register", SchemaValidator(registerSchema), asyncError(authController.register));
 router.post("/login", SchemaValidator(loginSchema), asyncError(authController.login));
+router.post("/refreshToken", asyncError(authController.refreshToken));
 
 export default router;
