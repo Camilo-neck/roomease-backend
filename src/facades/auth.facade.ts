@@ -66,7 +66,7 @@ class AuthFacade {
 
 function generateToken(user_id: ObjectId): string {
 	const token = jwt.sign({ _id: user_id }, process.env.TOKEN_SECRET || "S26ZNvgSv4", {
-		expiresIn: "30s",
+		expiresIn: "30m",
 	});
 	return token;
 }

@@ -10,6 +10,10 @@ class AuthControler {
 	public async login(req: Request, res: Response): Promise<Response | undefined> {
 		return authFacade.login(req, res);
 	}
+
+	public async refreshToken(req: Request, res: Response): Promise<Response | undefined> {
+		return authFacade.refreshToken(req, res);
+	}
 }
 
 export default new AuthControler();
