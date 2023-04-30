@@ -52,11 +52,17 @@ class AuthFacade {
 		if (!refreshToken) throw new ServerError("No refresh token provided", STATUS_CODES.BAD_REQUEST);
 
 		try {
+			// Verify refresh token
 			const decoded = verifyRefreshToken(refreshToken);
 			if (!decoded) throw new ServerError("Invalid refresh token", STATUS_CODES.BAD_REQUEST);
+			// Find user
 			const user = await userModel.findById(decoded._id);
 			if (!user) throw new ServerError("User not found", STATUS_CODES.BAD_REQUEST);
+			// Generate new token
 			const token: string = generateToken(user._id);
+
+			// add token to response header
+			res.setHeader("Access-Control-Expose-Headers", "auth-token");
 			return res.header("auth-token", token).status(STATUS_CODES.CREATED).json({ user });
 		} catch (error) {
 			throw new ServerError("Invalid refresh token", STATUS_CODES.BAD_REQUEST);
