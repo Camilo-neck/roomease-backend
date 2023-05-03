@@ -8,7 +8,7 @@ async function houseExists(req: Request, res: Response, next: NextFunction) {
 	let house_ids = [req.params.houseId, req.body.house_id, req.params.house_code, req.query.house_id];
 
 	house_ids = house_ids.filter(function (element) {
-		return element !== undefined;
+		return element;
 	});
 
 	if (house_ids.length > 1) {
