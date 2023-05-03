@@ -8,9 +8,9 @@ export const HouseExist = (field: string) => {
 	async function houseExist(req: Request, res: Response, next: NextFunction) {
 		const identifier = getIdentifer(field, req);
 
-		if (!identifier) {
-			return res.status(STATUS_CODES.BAD_REQUEST).json({ message: "Invalid request, house id missing" });
-		}
+	house_ids = house_ids.filter(function (element) {
+		return element;
+	});
 
 		const house = await get_house(identifier);
 
