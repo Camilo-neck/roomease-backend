@@ -21,6 +21,7 @@ class HouseFacade {
 		houseData["owner"] = req.userId;
 		houseData["pending_users"] = [];
 		houseData["users"] = users;
+		houseData["house_code"] = house_code;
 
 		const house = new houseModel(houseData);
 		await house.save();

@@ -21,9 +21,12 @@ class AuthFacade {
 
 		//token
 		const token: string = generateToken(user._id);
+		// Refresh token
+		const refreshToken = generateRefreshToken(user._id);
 
 		return res.header("auth-token", token).status(STATUS_CODES.CREATED).json({
 			message: "User created successfully",
+			refreshToken,
 		});
 	}
 
@@ -36,10 +39,34 @@ class AuthFacade {
 
 		//token
 		const token: string = generateToken(user._id);
+		// Refresh token
+		const refreshToken = generateRefreshToken(user._id);
 
 		// add token to response header
 		res.setHeader("Access-Control-Expose-Headers", "auth-token");
-		return res.header("auth-token", token).status(STATUS_CODES.CREATED).json(user);
+		return res.header("auth-token", token).status(STATUS_CODES.CREATED).json({ user, refreshToken });
+	}
+
+	public async refreshToken(req: Request, res: Response): Promise<Response | undefined> {
+		const refreshToken = req.body.refreshToken;
+		if (!refreshToken) throw new ServerError("No refresh token provided", STATUS_CODES.BAD_REQUEST);
+
+		try {
+			// Verify refresh token
+			const decoded = verifyRefreshToken(refreshToken);
+			if (!decoded) throw new ServerError("Invalid refresh token", STATUS_CODES.BAD_REQUEST);
+			// Find user
+			const user = await userModel.findById(decoded._id);
+			if (!user) throw new ServerError("User not found", STATUS_CODES.BAD_REQUEST);
+			// Generate new token
+			const token: string = generateToken(user._id);
+
+			// add token to response header
+			res.setHeader("Access-Control-Expose-Headers", "auth-token");
+			return res.header("auth-token", token).status(STATUS_CODES.CREATED).json({ user });
+		} catch (error) {
+			throw new ServerError("Invalid refresh token", STATUS_CODES.BAD_REQUEST);
+		}
 	}
 }
 
@@ -48,6 +75,23 @@ function generateToken(user_id: ObjectId): string {
 		expiresIn: "30m",
 	});
 	return token;
+}
+
+function generateRefreshToken(user_id: ObjectId): string {
+	const token = jwt.sign({ _id: user_id }, process.env.REFRESH_TOKEN_SECRET || "S2FjZGllZ29k", {
+		expiresIn: "7d",
+	});
+	return token;
+}
+
+function verifyToken(token: string): any {
+	const decoded = jwt.verify(token, process.env.TOKEN_SECRET || "S26ZNvgSv4");
+	return decoded;
+}
+
+function verifyRefreshToken(refreshToken: string): any {
+	const decoded = jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET || "S2FjZGllZ29k");
+	return decoded;
 }
 
 export default new AuthFacade();
