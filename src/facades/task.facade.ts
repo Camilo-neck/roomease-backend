@@ -9,15 +9,29 @@ import userModel from "../db/models/user.model";
 class TaskFacade {
 	public async get(req: Request, res: Response): Promise<Response> {
 		const { user_id, house_id } = req.query;
-		let task = undefined;
+		let tasks = undefined;
 
 		if (user_id === undefined) {
-			task = await taskModel.find({ house_id: house_id });
+			tasks = await taskModel.find({ house_id: house_id }).populate({
+				path: "users_id",
+				select: "name email",
+			});
 		} else {
-			task = await taskModel.find({ house_id: house_id, users_id: user_id });
+			tasks = await taskModel.find({ house_id: house_id, users_id: user_id }).populate({
+				path: "users_id",
+				select: "name email",
+			});
 		}
 
-		return res.status(STATUS_CODES.OK).json(task);
+		//change users_id to users
+		tasks = tasks.map((task) => {
+			const taskObj: any = task.toObject();
+			taskObj["users"] = taskObj["users_id"];
+			delete taskObj["users_id"];
+			return taskObj;
+		});
+
+		return res.status(STATUS_CODES.OK).json(tasks);
 	}
 
 	public async create(req: Request, res: Response): Promise<Response | undefined> {
