@@ -1,4 +1,5 @@
 import { Request, Response } from "express";
+import { Types } from "mongoose";
 
 import { ServerError } from "@/errors/server.error";
 import { STATUS_CODES } from "@/utils/constants";
@@ -37,7 +38,13 @@ class UserFacade {
 	}
 
 	public async getInfo(req: Request, res: Response): Promise<Response | undefined> {
-		const user = await userModel.findById(req.params.id, { password: 0 });
+		const { id } = req.params;
+
+		if (!Types.ObjectId.isValid(id)) {
+			throw new ServerError("Invalid user id", STATUS_CODES.BAD_REQUEST);
+		}
+
+		const user = await userModel.findById(id, { password: 0 });
 		if (!user) throw new ServerError("User not found", STATUS_CODES.NOT_FOUND);
 
 		return res.status(STATUS_CODES.OK).json(user);
@@ -45,6 +52,11 @@ class UserFacade {
 
 	public async update(req: Request, res: Response): Promise<Response | undefined> {
 		const { id } = req.params;
+
+		if (!Types.ObjectId.isValid(id)) {
+			throw new ServerError("Invalid user id", STATUS_CODES.BAD_REQUEST);
+		}
+
 		const updatedUser = await userModel.findByIdAndUpdate(id, req.body, { new: true });
 
 		if (!updatedUser) {
@@ -57,12 +69,17 @@ class UserFacade {
 	}
 
 	public async delete(req: Request, res: Response): Promise<Response | undefined> {
-		const userId: string = req.params.id;
-		await userModel.deleteOne({ _id: userId });
+		const { id } = req.params;
+
+		if (!Types.ObjectId.isValid(id)) {
+			throw new ServerError("Invalid user id", STATUS_CODES.BAD_REQUEST);
+		}
+
+		await userModel.deleteOne({ _id: id });
 
 		//Transacción en trigger de modelo de house
-		await houseModel.updateMany({ $pull: { users: userId } });
-		await taskModel.updateMany({ $pull: { users: userId } });
+		await houseModel.updateMany({ $pull: { users: id } });
+		await taskModel.updateMany({ $pull: { users: id } });
 		return res.status(STATUS_CODES.OK).json({ message: "User deleted" });
 	}
 }

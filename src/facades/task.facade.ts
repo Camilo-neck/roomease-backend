@@ -1,4 +1,5 @@
 import { Request, Response } from "express";
+import { Types } from "mongoose";
 
 import { ServerError } from "@/errors/server.error";
 import { STATUS_CODES } from "@/utils/constants";
@@ -120,18 +121,22 @@ async function validate_users(users_id: string[], house: any = undefined): Promi
 }
 
 async function validate_task(task_id: string, user_id: string): Promise<any> {
+	if (!Types.ObjectId.isValid(task_id)) {
+		throw new ServerError("Invalid task id", STATUS_CODES.BAD_REQUEST);
+	}
+
 	const user = await userModel.findById(user_id);
 	if (!user) {
 		throw new ServerError("User not found", STATUS_CODES.BAD_REQUEST);
 	}
-	const task = await taskModel.findById(task_id);
+	const task = await taskModel.findById({ _id: task_id });
 	if (!task) {
 		throw new ServerError("Task not found", STATUS_CODES.BAD_REQUEST);
 	}
 
-	// if (!user?.tasks.includes(task_id)) {
-	// 	throw new ServerError("The user does not have that task.", STATUS_CODES.BAD_REQUEST);
-	// }
+	if (!user?.tasks.includes(task_id)) {
+		throw new ServerError("The user does not have that task", STATUS_CODES.BAD_REQUEST);
+	}
 
 	return task;
 }
