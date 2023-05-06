@@ -8,13 +8,14 @@ import { SchemaValidator } from "@/middlewares/schemaValidator.middeware";
 import { createTaskSchema, updateTaskSchema } from "@/utils/RouteSchemas/taskRouteSchemas";
 
 import asyncError from "../middlewares/asyncError.middleware";
+import { FIELD_TYPES } from "../utils/constants";
 
 const router = express.Router();
 
-router.get("/get", [Auth, HouseExist, BelongsToHouse], asyncError(taskController.get));
+router.get("/get", [Auth, HouseExist(FIELD_TYPES.QUERY), BelongsToHouse], asyncError(taskController.get));
 router.post(
 	"/create",
-	[SchemaValidator(createTaskSchema), Auth, HouseExist, BelongsToHouse],
+	[SchemaValidator(createTaskSchema), Auth, HouseExist(FIELD_TYPES.BODY), BelongsToHouse],
 	asyncError(taskController.create),
 );
 router.put("/update/:id", SchemaValidator(updateTaskSchema), Auth, asyncError(taskController.update));

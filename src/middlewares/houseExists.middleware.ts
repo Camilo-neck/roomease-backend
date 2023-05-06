@@ -2,38 +2,32 @@ import { NextFunction, Request, Response } from "express";
 import { Types } from "mongoose";
 
 import houseModel from "@/db/models/house.model";
-import { STATUS_CODES } from "@/utils/constants";
+import { FIELD_TYPES, STATUS_CODES } from "@/utils/constants";
 
-async function houseExists(req: Request, res: Response, next: NextFunction) {
-	let house_ids = [req.params.houseId, req.body.house_id, req.params.house_code, req.query.house_id];
+export const HouseExist = (field: string) => {
+	async function houseExist(req: Request, res: Response, next: NextFunction) {
+		const identifier = getIdentifer(field, req);
 
-	house_ids = house_ids.filter(function (element) {
-		return element;
-	});
+		if (!identifier) {
+			return res.status(STATUS_CODES.BAD_REQUEST).json({ message: "Invalid request, house id missing" });
+		}
 
-	if (house_ids.length > 1) {
-		return res.status(STATUS_CODES.BAD_REQUEST).json({ message: "Invalid request, more than one house id sent" });
+		const house = await get_house(identifier);
+
+		if (!house) {
+			return res.status(STATUS_CODES.NOT_FOUND).json({ message: "House not found" });
+		}
+
+		req.house = house;
+		return next();
 	}
 
-	if (house_ids.length == 0) {
-		return res.status(STATUS_CODES.BAD_REQUEST).json({ message: "Invalid request, house id missing" });
-	}
-
-	const house_id = house_ids[0];
-
-	const house = await get_house(house_id);
-
-	if (!house) {
-		return res.status(STATUS_CODES.NOT_FOUND).json({ message: "House not found" });
-	}
-
-	req.house = house;
-	return next();
-}
-
-export const HouseExist = (req: Request, res: Response, next: NextFunction) => {
-	return Promise.resolve(houseExists(req, res, next)).catch(next);
+	return (req: Request, res: Response, next: NextFunction) => {
+		return Promise.resolve(houseExist(req, res, next)).catch(next);
+	};
 };
+
+////////////////////////////////
 
 async function get_house(identifier: string) {
 	let house = undefined;
@@ -42,4 +36,15 @@ async function get_house(identifier: string) {
 	} else house = await houseModel.findOne({ house_code: identifier });
 
 	return house;
+}
+
+function getIdentifer(field: string, req: Request) {
+	switch (field) {
+		case FIELD_TYPES.BODY:
+			return req.body.house_id;
+		case FIELD_TYPES.PARAMS:
+			return req.params.houseId;
+		case FIELD_TYPES.QUERY:
+			return req.query.house_id;
+	}
 }
