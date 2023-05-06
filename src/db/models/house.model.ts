@@ -35,7 +35,6 @@ houseSchema.post("deleteOne", async (doc) => {
 	await taskModel.deleteMany({ house_id: doc._id });
 });
 
-
 const houseModel = mongoose.model<IHouse>("House", houseSchema);
 
 export default houseModel;

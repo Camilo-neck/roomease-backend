@@ -8,3 +8,9 @@ export enum STATUS_CODES {
 	NOT_FOUND = 404,
 	INTERNAL_ERROR = 500,
 }
+
+export enum FIELD_TYPES {
+	BODY = "body",
+	QUERY = "query",
+	PARAMS = "params",
+}
