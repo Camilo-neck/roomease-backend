@@ -64,14 +64,9 @@ class TaskFacade {
 		await validate_task(id, req.userId);
 		await validate_users(updateTask.users_id, req.house);
 
-		// const task = await taskModel.findByIdAndUpdate(id, updateTask, { new: true });
-		const task = await taskModel.findOneAndUpdate({ _id: id }, updateTask, { new: true });
+		await taskModel.findOneAndUpdate({ _id: id }, updateTask, { new: true });
 
-		if (!task) {
-			throw new ServerError("Task not found", STATUS_CODES.BAD_REQUEST);
-		}
-
-		return res.status(STATUS_CODES.OK).json({ message: "Task updated", task });
+		return res.status(STATUS_CODES.OK).json({ message: "Task updated" });
 	}
 
 	public async delete(req: Request, res: Response): Promise<Response | undefined> {
