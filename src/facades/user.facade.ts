@@ -77,9 +77,6 @@ class UserFacade {
 
 		await userModel.deleteOne({ _id: id });
 
-		//Transacción en trigger de modelo de house
-		await houseModel.updateMany({ $pull: { users: id } });
-		await taskModel.updateMany({ $pull: { users: id } });
 		return res.status(STATUS_CODES.OK).json({ message: "User deleted" });
 	}
 }
