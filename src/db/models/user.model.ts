@@ -3,6 +3,9 @@ import mongoose from "mongoose";
 
 import { IUser } from "@/dtos/Iuser.dto";
 
+import houseModel from "./house.model";
+import taskModel from "./task.model";
+
 const Schema = mongoose.Schema;
 
 const userSchema = new Schema(
@@ -21,6 +24,11 @@ const userSchema = new Schema(
 	},
 	{ timestamps: true },
 );
+
+userSchema.post("deleteOne", async (doc) => {
+	await houseModel.updateMany({ $pull: { users: doc._id } });
+	await taskModel.updateMany({ $pull: { users: doc._id } });
+});
 
 userSchema.methods.encryptPassword = async (password: string): Promise<string> => {
 	const salt = await bcrypt.genSalt(10);
