@@ -12,14 +12,14 @@ import { FIELD_TYPES } from "../utils/constants";
 
 const router = express.Router();
 
-router.get("/get", [Auth, HouseExist(FIELD_TYPES.QUERY), BelongsToHouse], asyncError(taskController.get));
+router.get("/", [Auth, HouseExist(FIELD_TYPES.QUERY), BelongsToHouse], asyncError(taskController.get));
 router.post(
-	"/create",
+	"/",
 	[SchemaValidator(createTaskSchema), Auth, HouseExist(FIELD_TYPES.BODY), BelongsToHouse],
 	asyncError(taskController.create),
 );
-router.put("/update/:id", SchemaValidator(updateTaskSchema), Auth, asyncError(taskController.update));
-router.delete("/delete/:id", Auth, asyncError(taskController.delete));
+router.put("/:id", SchemaValidator(updateTaskSchema), Auth, asyncError(taskController.update));
+router.delete("/:id", Auth, asyncError(taskController.delete));
 router.put("/done/:id", Auth, asyncError(taskController.done));
 
 router.get("/list", Auth, asyncError(taskController.list));

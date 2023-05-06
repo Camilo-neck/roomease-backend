@@ -9,11 +9,11 @@ import userController from "../controllers/user.controller";
 
 const router = express.Router();
 
-router.get("/list", Auth, asyncError(userController.listUsers)); //should be disabled
+router.get("/", Auth, asyncError(userController.listUsers)); //should be disabled
 router.get("/profile", Auth, asyncError(userController.profile));
 router.get("/houses", Auth, asyncError(userController.getHouses));
-router.get("/getInfo/:id", Auth, asyncError(userController.getUserInfo));
-router.put("/update/:id", SchemaValidator(updateUserSchema), Auth, asyncError(userController.updateUser));
-router.delete("/delete/:id", Auth, asyncError(userController.deleteUser));
+router.get("/:id", Auth, asyncError(userController.getUserInfo));
+router.put("/:id", SchemaValidator(updateUserSchema), Auth, asyncError(userController.updateUser));
+router.delete("/:id", Auth, asyncError(userController.deleteUser));
 
 export default router;
