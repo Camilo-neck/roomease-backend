@@ -50,7 +50,6 @@ class TaskFacade {
 		const task = new taskModel(taskData);
 
 		await task.save();
-		await userModel.updateMany({ _id: { $in: users_id } }, { $push: { tasks: task._id.toString() } });
 
 		return res.status(STATUS_CODES.CREATED).json({
 			message: "Task created successfully",
@@ -58,21 +57,18 @@ class TaskFacade {
 		});
 	}
 	public async update(req: Request, res: Response): Promise<Response | undefined> {
-		const { task_id } = req.params;
+		const { id } = req.params;
 		const updateTask = req.body;
 
-		await validate_task(task_id, req.userId);
+		await validate_task(id, req.userId);
 		await validate_users(updateTask.users_id, req.house);
 
-		const task = await taskModel.findByIdAndUpdate(task_id, updateTask, { new: true });
+		// const task = await taskModel.findByIdAndUpdate(id, updateTask, { new: true });
+		const task = await taskModel.findOneAndUpdate({ _id: id }, updateTask, { new: true });
 
 		if (!task) {
 			throw new ServerError("Task not found", STATUS_CODES.BAD_REQUEST);
 		}
-
-		//Modificar lista de tareas de los usuarios
-		await userModel.updateMany({ $pull: { tasks: task_id } });
-		await userModel.updateMany({ _id: { $in: task.users_id } }, { $push: { tasks: task._id.toString() } });
 
 		return res.status(STATUS_CODES.OK).json({ message: "Task updated", task });
 	}
@@ -83,8 +79,7 @@ class TaskFacade {
 
 		await validate_task(taskId, userId);
 
-		await taskModel.findByIdAndDelete(taskId);
-		await userModel.updateMany({ $pull: { tasks: taskId } });
+		await taskModel.findOneAndDelete({ _id: taskId });
 
 		return res.status(STATUS_CODES.OK).json({ message: "Task deleted" });
 	}
@@ -134,9 +129,9 @@ async function validate_task(task_id: string, user_id: string): Promise<any> {
 		throw new ServerError("Task not found", STATUS_CODES.BAD_REQUEST);
 	}
 
-	if (!user?.tasks.includes(task_id)) {
-		throw new ServerError("The user does not have that task.", STATUS_CODES.BAD_REQUEST);
-	}
+	// if (!user?.tasks.includes(task_id)) {
+	// 	throw new ServerError("The user does not have that task.", STATUS_CODES.BAD_REQUEST);
+	// }
 
 	return task;
 }

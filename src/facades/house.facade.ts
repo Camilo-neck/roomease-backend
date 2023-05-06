@@ -26,8 +26,6 @@ class HouseFacade {
 		const house = new houseModel(houseData);
 		await house.save();
 
-		await userModel.updateOne({ _id: req.userId }, { $push: { houses: house._id.toString() } });
-
 		return res.status(STATUS_CODES.CREATED).json({
 			message: "House created successfully",
 			house_code,
@@ -55,13 +53,15 @@ class HouseFacade {
 
 		if (name !== house.name) house.house_code = await generateCode(name);
 
-		house.name = name;
-		house.description = description;
-		house.house_picture = house_picture;
-		house.address = address;
-		house.tags = tags;
+		house.set({
+			name: name,
+			description: description,
+			house_picture: house_picture,
+			address: address,
+			tags: tags,
+		});
 
-		await house.save();
+		await house.updateOne();
 
 		return res.status(STATUS_CODES.OK).json({ message: "House modified" });
 	}
@@ -69,8 +69,6 @@ class HouseFacade {
 	public async delete(req: Request, res: Response): Promise<Response | undefined> {
 		const { houseId } = req.params;
 		await houseModel.deleteOne({ _id: houseId });
-		await userModel.updateMany({ $pull: { houses: houseId } });
-		await taskModel.deleteMany({ house_id: houseId });
 
 		return res.status(STATUS_CODES.OK).json({ message: "House deleted" });
 	}

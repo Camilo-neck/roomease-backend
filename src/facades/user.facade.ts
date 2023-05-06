@@ -60,6 +60,7 @@ class UserFacade {
 		const userId: string = req.params.id;
 		await userModel.deleteOne({ _id: userId });
 
+		//Transacción en trigger de modelo de house
 		await houseModel.updateMany({ $pull: { users: userId } });
 		await taskModel.updateMany({ $pull: { users: userId } });
 		return res.status(STATUS_CODES.OK).json({ message: "User deleted" });

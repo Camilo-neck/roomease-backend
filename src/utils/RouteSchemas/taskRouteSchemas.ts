@@ -15,7 +15,6 @@ const createTaskSchema: Joi.ObjectSchema = Joi.object({
 const updateTaskSchema: Joi.ObjectSchema = Joi.object({
 	name: Joi.string().required(),
 	description: Joi.string().required(),
-	house_id: Joi.string().required(),
 	users_id: Joi.array().required(),
 	days: Joi.array().items(Joi.string().valid("MO", "TU", "WE", "TH", "FR", "SA", "SU")).optional(),
 	start_date: Joi.date().required(),

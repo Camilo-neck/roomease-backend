@@ -2,6 +2,9 @@ import mongoose from "mongoose";
 
 import { IHouse } from "@/dtos/Ihouse.dto";
 
+import taskModel from "./task.model";
+import userModel from "./user.model";
+
 const Schema = mongoose.Schema;
 
 const houseSchema = new Schema(
@@ -22,6 +25,16 @@ const houseSchema = new Schema(
 	},
 	{ timestamps: true },
 );
+
+houseSchema.post("save", async (doc) => {
+	await userModel.updateOne({ _id: doc.owner }, { $push: { houses: doc._id.toString() } });
+});
+
+houseSchema.post("deleteOne", async (doc) => {
+	await userModel.updateMany({ $pull: { houses: doc._id } });
+	await taskModel.deleteMany({ house_id: doc._id });
+});
+
 
 const houseModel = mongoose.model<IHouse>("House", houseSchema);
 
