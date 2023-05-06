@@ -13,17 +13,17 @@ import { createHouseSchema, handleJoinSchema, updateHouseSchema } from "../utils
 
 const router = express.Router();
 
-router.get("/list", Auth, asyncError(houseController.list)); //should be disabled
-router.post("/create", [SchemaValidator(createHouseSchema), Auth], asyncError(houseController.create));
+router.get("/", Auth, asyncError(houseController.list)); //should be disabled
+router.post("/", [SchemaValidator(createHouseSchema), Auth], asyncError(houseController.create));
 router.get("/:houseId", [Auth, HouseExist(FIELD_TYPES.PARAMS), BelongsToHouse], asyncError(houseController.getById));
 router.put(
-	"/update/:houseId",
+	"/:houseId",
 	[SchemaValidator(updateHouseSchema), Auth, HouseExist(FIELD_TYPES.PARAMS), Owner],
 	asyncError(houseController.update),
 );
-router.delete("/delete/:houseId", [Auth, HouseExist(FIELD_TYPES.PARAMS), Owner], asyncError(houseController.delete));
-router.get("/join/:house_code", [Auth, HouseExist(FIELD_TYPES.PARAMS)], asyncError(houseController.join));
-router.post(
+router.delete("/:houseId", [Auth, HouseExist(FIELD_TYPES.PARAMS), Owner], asyncError(houseController.delete));
+router.put("/join/:house_code", [Auth, HouseExist(FIELD_TYPES.PARAMS)], asyncError(houseController.join));
+router.put(
 	"/handleJoin/:houseId",
 	[SchemaValidator(handleJoinSchema), Auth, HouseExist(FIELD_TYPES.PARAMS), Owner],
 	asyncError(houseController.handleJoin),

@@ -27,9 +27,9 @@ export class App {
 
 		this._app.use("/", helloRoutes);
 		this._app.use("/", authRoutes);
-		this._app.use("/user", userRoutes);
-		this._app.use("/house", houseRoutes);
-		this._app.use("/task", taskRoutes);
+		this._app.use("/users", userRoutes);
+		this._app.use("/houses", houseRoutes);
+		this._app.use("/tasks", taskRoutes);
 
 		this._app.use(errorMiddleware);
 	}
