@@ -28,7 +28,7 @@ const paramsSchema: Joi.ObjectSchema = Joi.object({
 });
 
 const querySchema: Joi.ObjectSchema = Joi.object({
-	user_id: Joi.string().required(),
+	user_id: Joi.string().optional(),
 	house_id: Joi.string().required(),
 });
 
