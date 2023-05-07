@@ -30,4 +30,4 @@ const paramsHouseCode: Joi.ObjectSchema = Joi.object({
 	house_code: Joi.string().required(),
 });
 
-export { createHouseSchema, handleJoinSchema, paramsHouseCode,paramsSchema,updateHouseSchema };
+export { createHouseSchema, handleJoinSchema, paramsHouseCode, paramsSchema, updateHouseSchema };
