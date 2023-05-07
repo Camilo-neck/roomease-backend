@@ -2,6 +2,7 @@ import express from "express";
 
 import asyncError from "@/middlewares/asyncError.middleware";
 import { Auth } from "@/middlewares/auth.middleware";
+import { ParamsValidator } from "@/middlewares/paramsValidator.middleware";
 import { SchemaValidator } from "@/middlewares/schemaValidator.middeware";
 import { FIELD_TYPES } from "@/utils/constants";
 import { paramsSchema, updateUserSchema } from "@/utils/RouteSchemas/userRouteSchemas";
