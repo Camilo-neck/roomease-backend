@@ -43,7 +43,11 @@ function getIdentifer(field: string, req: Request) {
 		case FIELD_TYPES.BODY:
 			return req.body.house_id;
 		case FIELD_TYPES.PARAMS:
-			return req.params.houseId;
+			if (Types.ObjectId.isValid(req.params.houseId)) {
+				return req.params.houseId;
+			}
+			return req.params.house_code;
+
 		case FIELD_TYPES.QUERY:
 			return req.query.house_id;
 	}
