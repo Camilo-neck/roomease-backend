@@ -16,5 +16,4 @@ const paramsSchema: Joi.ObjectSchema = Joi.object({
 	id: Joi.string().required(),
 });
 
-
-export {paramsSchema,updateUserSchema};
+export { paramsSchema, updateUserSchema };
