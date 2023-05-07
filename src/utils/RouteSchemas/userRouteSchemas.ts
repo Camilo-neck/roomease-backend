@@ -12,4 +12,9 @@ const updateUserSchema: Joi.ObjectSchema = Joi.object({
 	scores: Joi.array().items(Joi.string()).required(),
 }).options({ abortEarly: false });
 
-export default updateUserSchema;
+const paramsSchema: Joi.ObjectSchema = Joi.object({
+	id: Joi.string().required(),
+});
+
+
+export {paramsSchema,updateUserSchema};

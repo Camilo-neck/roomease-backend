@@ -22,4 +22,12 @@ const handleJoinSchema: Joi.ObjectSchema = Joi.object({
 	accept: Joi.boolean().required(),
 });
 
-export { createHouseSchema, handleJoinSchema, updateHouseSchema };
+const paramsSchema: Joi.ObjectSchema = Joi.object({
+	houseId: Joi.string().required(),
+});
+
+const paramsHouseCode: Joi.ObjectSchema = Joi.object({
+	house_code: Joi.string().required(),
+});
+
+export { createHouseSchema, handleJoinSchema, paramsHouseCode,paramsSchema,updateHouseSchema };

@@ -23,4 +23,13 @@ const updateTaskSchema: Joi.ObjectSchema = Joi.object({
 	until_date: Joi.date().optional(),
 });
 
-export { createTaskSchema, updateTaskSchema };
+const paramsSchema: Joi.ObjectSchema = Joi.object({
+	id: Joi.string().required(),
+});
+
+const querySchema: Joi.ObjectSchema = Joi.object({
+	user_id: Joi.string().required(), 
+	house_id: Joi.string().required()
+});
+
+export { createTaskSchema, paramsSchema,querySchema,updateTaskSchema };
