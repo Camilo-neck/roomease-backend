@@ -22,6 +22,13 @@ class TaskFacade {
 				path: "users_id",
 				select: "name email",
 			});
+
+			// return only the tasks that are currently active
+			tasks = tasks.filter((task: any) => {
+				const today = new Date();
+				const until_date = new Date(task.until_date);
+				return today <= until_date;
+			});
 		}
 
 		//change users_id to users
