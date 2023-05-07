@@ -5,7 +5,6 @@ import { Auth } from "@/middlewares/auth.middleware";
 import { BelongsToHouse } from "@/middlewares/belongsToHouse.middleware";
 import { HouseExist } from "@/middlewares/houseExists.middleware";
 import { Owner } from "@/middlewares/owner.middleware";
-import { ParamsValidator } from "@/middlewares/paramsValidator.middleware";
 import { SchemaValidator } from "@/middlewares/schemaValidator.middeware";
 import { FIELD_TYPES } from "@/utils/constants";
 

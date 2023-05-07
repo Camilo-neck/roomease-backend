@@ -4,8 +4,6 @@ import taskController from "@/controllers/task.controller";
 import { Auth } from "@/middlewares/auth.middleware";
 import { BelongsToHouse } from "@/middlewares/belongsToHouse.middleware";
 import { HouseExist } from "@/middlewares/houseExists.middleware";
-import { ParamsValidator } from "@/middlewares/paramsValidator.middleware";
-import { QueryValidator } from "@/middlewares/queryValidator.middleware";
 import { SchemaValidator } from "@/middlewares/schemaValidator.middeware";
 import { createTaskSchema, paramsSchema, querySchema, updateTaskSchema } from "@/utils/RouteSchemas/taskRouteSchemas";
 
