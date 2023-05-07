@@ -2,6 +2,7 @@ import { NextFunction, Request, Response } from "express";
 import { ObjectSchema } from "joi";
 
 import { STATUS_CODES } from "@/utils/constants";
+import { FIELD_TYPES } from "@/utils/constants";
 
 import { STATUS_CODES } from "@/utils/constants";
 
