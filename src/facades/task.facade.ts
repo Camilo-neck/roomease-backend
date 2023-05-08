@@ -22,10 +22,12 @@ class TaskFacade {
 				path: "users_id",
 				select: "name email",
 			});
+
+			tasks = get_week_tasks(tasks);
 		}
 
 		//change users_id to users
-		tasks = tasks.map((task) => {
+		tasks = tasks.map((task: any) => {
 			const taskObj: any = task.toObject();
 			taskObj["users"] = taskObj["users_id"];
 			delete taskObj["users_id"];
@@ -135,4 +137,16 @@ async function validate_task(task_id: string, user_id: string): Promise<any> {
 
 	return task;
 }
+
+const get_week_tasks = (tasks: any[]) => {
+	const today = new Date();
+	const firstDayOfWeek = new Date(today.setDate(today.getDate() - today.getDay()));
+
+	return tasks.filter((task: any) => {
+		const t_date = task.until_date ? task.until_date : task.end_date;
+		const taskDate = new Date(t_date);
+		return taskDate >= firstDayOfWeek;
+	});
+};
+
 export default new TaskFacade();
