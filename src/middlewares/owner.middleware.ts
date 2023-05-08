@@ -1,6 +1,5 @@
 import { NextFunction, Request, Response } from "express";
 
-import houseModel from "@/db/models/house.model";
 import { STATUS_CODES } from "@/utils/constants";
 
 export const Owner = (req: Request, res: Response, next: NextFunction) => {
