@@ -3,7 +3,7 @@ import Joi from "joi";
 const createHouseSchema: Joi.ObjectSchema = Joi.object({
 	name: Joi.string().required(),
 	description: Joi.string().required(),
-	house_picture: Joi.string().required(),
+	house_picture: Joi.string().optional(),
 	address: Joi.string().required(),
 	users: Joi.array().required(),
 	tags: Joi.array().required(),
@@ -12,7 +12,7 @@ const createHouseSchema: Joi.ObjectSchema = Joi.object({
 const updateHouseSchema: Joi.ObjectSchema = Joi.object({
 	name: Joi.string().required(),
 	description: Joi.string().required(),
-	house_picture: Joi.string().required(),
+	house_picture: Joi.string().optional(),
 	address: Joi.string().required(),
 	tags: Joi.array().required(),
 });
