@@ -23,7 +23,9 @@ class HouseFacade {
 		houseData["users"] = users;
 		houseData["house_code"] = house_code;
 
-		if (!houseData["house_picture"]) houseData["house_picture"] = "https://images.adsttc.com/media/images/5d34/e507/284d/d109/5600/0240/large_jpg/_FI.jpg?1563747560";
+		if (!houseData["house_picture"])
+			houseData["house_picture"] =
+				"https://images.adsttc.com/media/images/5d34/e507/284d/d109/5600/0240/large_jpg/_FI.jpg?1563747560";
 
 		const house = new houseModel(houseData);
 		await house.save();
