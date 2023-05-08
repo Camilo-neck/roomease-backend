@@ -4,9 +4,11 @@ import { ObjectSchema } from "joi";
 import { STATUS_CODES } from "@/utils/constants";
 import { FIELD_TYPES } from "@/utils/constants";
 
-export const SchemaValidator = (schema: ObjectSchema, type: string): ((...args: any[]) => any) => {
+type RequestType = "body" | "query" | "params";
+
+export const SchemaValidator = (schema: ObjectSchema, type: RequestType): ((...args: any[]) => any) => {
 	return (req: Request, res: Response, next: NextFunction) => {
-		const requestObject = type === FIELD_TYPES.BODY ? req.body : type === FIELD_TYPES.PARAMS ? req.params : req.query;
+		const requestObject = type === "body" ? req.body : type === "query" ? req.query : req.params;
 		const { error } = schema.validate(requestObject);
 		if (error) {
 			return res.status(STATUS_CODES.BAD_REQUEST).json({
