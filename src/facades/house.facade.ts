@@ -50,24 +50,31 @@ class HouseFacade {
 	}
 
 	public async update(req: Request, res: Response): Promise<Response | undefined> {
-		const { name, description, house_picture, address, tags } = req.body;
-		const house = req.house;
+		try {
+			const { name, description, house_picture, address, tags } = req.body;
+			const house = req.house;
 
-		if (name.includes("_")) throw new ServerError("Invalid name, name can't contain '_'", STATUS_CODES.BAD_REQUEST);
+			if (name.includes("_")) throw new ServerError("Invalid name, name can't contain '_'", STATUS_CODES.BAD_REQUEST);
 
-		if (name !== house.name) house.house_code = await generateCode(name);
+			if (name !== house.name) house.house_code = await generateCode(name);
 
-		house.set({
-			name: name,
-			description: description,
-			house_picture: house_picture,
-			address: address,
-			tags: tags,
-		});
+			// house.set({
+			// 	name: name,
+			// 	description: description,
+			// 	house_picture: house_picture,
+			// 	address: address,
+			// 	tags: tags,
+			// });
 
-		await house.updateOne();
+			//await taskModel.findOneAndUpdate({ _id: id }, updateTask, { new: true });
 
-		return res.status(STATUS_CODES.OK).json({ message: "House modified" });
+			await houseModel.updateOne({ _id: house._id }, { name, description, house_picture, address, tags }, { new: true });
+
+			return res.status(STATUS_CODES.OK).json({ message: "House modified" });
+		} catch (error: any) {
+			console.log(error);
+			return res.status(STATUS_CODES.BAD_REQUEST).json({ message: error.message });
+		}
 	}
 
 	public async delete(req: Request, res: Response): Promise<Response | undefined> {
