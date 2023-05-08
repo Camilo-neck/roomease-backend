@@ -28,7 +28,13 @@ router.get(
 );
 router.put(
 	"/:houseId",
-	[SchemaValidator(paramsSchema, FIELD_TYPES.PARAMS), SchemaValidator(updateHouseSchema, FIELD_TYPES.BODY), Auth, HouseExist(FIELD_TYPES.PARAMS), Owner],
+	[
+		SchemaValidator(paramsSchema, FIELD_TYPES.PARAMS),
+		SchemaValidator(updateHouseSchema, FIELD_TYPES.BODY),
+		Auth,
+		HouseExist(FIELD_TYPES.PARAMS),
+		Owner,
+	],
 	asyncError(houseController.update),
 );
 router.delete(
@@ -43,7 +49,13 @@ router.put(
 );
 router.put(
 	"/handleJoin/:houseId",
-	[SchemaValidator(paramsSchema, FIELD_TYPES.PARAMS), SchemaValidator(handleJoinSchema, FIELD_TYPES.BODY), Auth, HouseExist(FIELD_TYPES.PARAMS), Owner],
+	[
+		SchemaValidator(paramsSchema, FIELD_TYPES.PARAMS),
+		SchemaValidator(handleJoinSchema, FIELD_TYPES.BODY),
+		Auth,
+		HouseExist(FIELD_TYPES.PARAMS),
+		Owner,
+	],
 	asyncError(houseController.handleJoin),
 );
 
