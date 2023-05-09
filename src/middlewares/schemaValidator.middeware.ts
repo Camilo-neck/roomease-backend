@@ -4,11 +4,9 @@ import { ObjectSchema } from "joi";
 import { STATUS_CODES } from "@/utils/constants";
 import { FIELD_TYPES } from "@/utils/constants";
 
-import { STATUS_CODES } from "@/utils/constants";
-
-export const SchemaValidator = (schema: ObjectSchema): ((...args: any[]) => any) => {
+export const SchemaValidator = (schema: ObjectSchema, type: string): ((...args: any[]) => any) => {
 	return (req: Request, res: Response, next: NextFunction) => {
-		const requestObject = type === "body" ? req.body : type === "query" ? req.query : req.params;
+		const requestObject = type === FIELD_TYPES.BODY ? req.body : type === FIELD_TYPES.PARAMS ? req.params : req.query;
 		const { error } = schema.validate(requestObject);
 		if (error) {
 			return res.status(STATUS_CODES.BAD_REQUEST).json({
