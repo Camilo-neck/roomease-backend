@@ -4,7 +4,7 @@ import asyncError from "@/middlewares/asyncError.middleware";
 import { Auth } from "@/middlewares/auth.middleware";
 import { SchemaValidator } from "@/middlewares/schemaValidator.middeware";
 import { FIELD_TYPES } from "@/utils/constants";
-import { paramsSchema, updateUserSchema } from "@/utils/RouteSchemas/userRouteSchemas";
+import { leaveSchema, paramsSchema, updateUserSchema } from "@/utils/RouteSchemas/userRouteSchemas";
 
 import userController from "../controllers/user.controller";
 
@@ -21,6 +21,13 @@ router.put(
 	SchemaValidator(updateUserSchema, FIELD_TYPES.BODY),
 
 	asyncError(userController.updateUser),
+);
+router.put(
+	"/leave/:id/:houseId",
+	Auth,
+	SchemaValidator(leaveSchema, FIELD_TYPES.PARAMS),
+
+	asyncError(userController.leaveHouse),
 );
 router.delete("/:id", Auth, SchemaValidator(paramsSchema, FIELD_TYPES.PARAMS), asyncError(userController.deleteUser));
 

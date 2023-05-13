@@ -68,6 +68,29 @@ class UserFacade {
 		return res.status(STATUS_CODES.OK).json({ message: "User updated", updatedUser });
 	}
 
+	public async leaveHouse(req: Request, res: Response): Promise<Response | undefined> {
+		const userId = req.params.id;
+		const houseId = req.params.houseId;
+
+		if (!Types.ObjectId.isValid(houseId)) {
+			throw new ServerError("Invalid house id", STATUS_CODES.BAD_REQUEST);
+		}
+
+		const updatedUser = await userModel.findByIdAndUpdate(userId, { $pull: { houses: houseId } }, { new: true });
+		//Triger -> ¿Cómo pasarle la constante houseId?. También faltaría poner que cuando una tarea en una casa solo tenga
+		// un usuario y este se sale, se elimine la tarea.
+		await taskModel.updateMany({ house_id: houseId }, { $pull: { users_id: userId } });
+		await houseModel.updateOne({ _id: houseId }, { $pull: { users: userId } });
+
+		if (!updatedUser) {
+			return res.status(STATUS_CODES.NOT_FOUND).json({
+				message: "User not found",
+			});
+		}
+
+		return res.status(STATUS_CODES.OK).json({ message: "User removed from house", updatedUser });
+	}
+
 	public async delete(req: Request, res: Response): Promise<Response | undefined> {
 		const { id } = req.params;
 
