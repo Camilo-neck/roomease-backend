@@ -1,5 +1,4 @@
 import { Request, Response } from "express";
-import { Types } from "mongoose";
 
 import houseModel from "@/db/models/house.model";
 import userModel from "@/db/models/user.model";
@@ -110,7 +109,7 @@ class HouseFacade {
 	public async handleJoin(req: Request, res: Response): Promise<Response | undefined> {
 		const { userId, accept } = req.body;
 
-		const { house_id } = req.params;
+		const { houseId } = req.params;
 		const house = req.house;
 
 		//check if user has a pending request
@@ -121,12 +120,13 @@ class HouseFacade {
 
 		//Accept join request
 		if (accept) {
-			await acceptRequest(userId, house_id);
+			console.log(userId, houseId);
+			await acceptRequest(userId, houseId);
 			return res.status(STATUS_CODES.OK).json({ message: "Request accepted" });
 		}
 
 		//Reject join request
-		await rejectRequest(userId, house_id);
+		await rejectRequest(userId, houseId);
 		return res.status(STATUS_CODES.OK).json({ message: "Request rejected" });
 	}
 
@@ -134,19 +134,34 @@ class HouseFacade {
 		const house_id = req.params.houseId;
 		const user_id = req.userId;
 
-		console.log(house_id, user_id);
-
 		await remove_user(house_id, user_id);
-		return res.status(STATUS_CODES.OK).json({ message: "User leave house" });
+
+		const house = await houseModel.findById(house_id);
+
+		if (user_id == house?.owner) {
+			if (house?.users.length > 0) {
+				await houseModel.updateOne({ _id: house_id }, { owner: house?.users[0] });
+			} else {
+				await houseModel.deleteOne({ _id: house_id });
+				await taskModel.deleteMany({ house_id });
+				return res.status(STATUS_CODES.OK).json({
+					message: "The user leaves the house, the house was deleted because there are no more users left in the house",
+				});
+			}
+		}
+
+		return res.status(STATUS_CODES.OK).json({ message: "User leaves the house" });
 	}
 
 	public async kickUser(req: Request, res: Response): Promise<Response | undefined> {
 		const { house_id, user_id }: any = req.query;
 
 		const user = await userModel.findById(user_id);
-		if (!user) throw new ServerError("User not found", STATUS_CODES.BAD_REQUEST);
+		if (!user) throw new ServerError("User not found", STATUS_CODES.NOT_FOUND);
 		if (!req.house.users.includes(user_id))
 			throw new ServerError("User doesn't belong to house", STATUS_CODES.BAD_REQUEST);
+		if (user_id == req.house.owner)
+			throw new ServerError("You can't kick yourself (owner), use /leave instead", STATUS_CODES.BAD_REQUEST);
 
 		await remove_user(house_id, user_id);
 		return res.status(STATUS_CODES.OK).json({ message: "User removed from house" });
