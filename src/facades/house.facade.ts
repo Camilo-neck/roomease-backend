@@ -1,4 +1,5 @@
 import { Request, Response } from "express";
+import { Types } from "mongoose";
 
 import houseModel from "@/db/models/house.model";
 import userModel from "@/db/models/user.model";
@@ -78,8 +79,8 @@ class HouseFacade {
 	}
 
 	public async delete(req: Request, res: Response): Promise<Response | undefined> {
-		const { houseId } = req.params;
-		await houseModel.deleteOne({ _id: houseId });
+		const { house_id } = req.params;
+		await houseModel.deleteOne({ _id: house_id });
 
 		return res.status(STATUS_CODES.OK).json({ message: "House deleted" });
 	}
@@ -91,8 +92,8 @@ class HouseFacade {
 		const user = await userModel.findById(req.userId);
 
 		//check if user is already in house
-		const houseId: string = house._id.toString();
-		if (user?.houses.includes(houseId)) {
+		const house_id: string = house._id.toString();
+		if (user?.houses.includes(house_id)) {
 			throw new ServerError("User already in house", STATUS_CODES.BAD_REQUEST);
 		}
 
@@ -109,7 +110,7 @@ class HouseFacade {
 	public async handleJoin(req: Request, res: Response): Promise<Response | undefined> {
 		const { userId, accept } = req.body;
 
-		const { houseId } = req.params;
+		const { house_id } = req.params;
 		const house = req.house;
 
 		//check if user has a pending request
@@ -120,25 +121,47 @@ class HouseFacade {
 
 		//Accept join request
 		if (accept) {
-			await acceptRequest(userId, houseId);
+			await acceptRequest(userId, house_id);
 			return res.status(STATUS_CODES.OK).json({ message: "Request accepted" });
 		}
 
 		//Reject join request
-		await rejectRequest(userId, houseId);
+		await rejectRequest(userId, house_id);
 		return res.status(STATUS_CODES.OK).json({ message: "Request rejected" });
+	}
+
+	public async leaveHouse(req: Request, res: Response): Promise<Response | undefined> {
+		const house_id = req.params.houseId;
+		const user_id = req.userId;
+
+		console.log(house_id, user_id);
+
+		await remove_user(house_id, user_id);
+		return res.status(STATUS_CODES.OK).json({ message: "User leave house" });
+	}
+
+	public async kickUser(req: Request, res: Response): Promise<Response | undefined> {
+		const { house_id, user_id }: any = req.query;
+
+		const user = await userModel.findById(user_id);
+		if (!user) throw new ServerError("User not found", STATUS_CODES.BAD_REQUEST);
+		if (!req.house.users.includes(user_id))
+			throw new ServerError("User doesn't belong to house", STATUS_CODES.BAD_REQUEST);
+
+		await remove_user(house_id, user_id);
+		return res.status(STATUS_CODES.OK).json({ message: "User removed from house" });
 	}
 }
 
 //////////// Helper functions ////////////
 
-async function acceptRequest(userId: string, houseId: string) {
-	await houseModel.updateOne({ _id: houseId }, { $push: { users: userId }, $pull: { pending_users: userId } });
-	await userModel.updateOne({ _id: userId }, { $push: { houses: houseId } });
+async function acceptRequest(userId: string, house_id: string) {
+	await houseModel.updateOne({ _id: house_id }, { $push: { users: userId }, $pull: { pending_users: userId } });
+	await userModel.updateOne({ _id: userId }, { $push: { houses: house_id } });
 }
 
-async function rejectRequest(userId: string, houseId: string) {
-	await houseModel.updateOne({ _id: houseId }, { $pull: { pending_users: userId } });
+async function rejectRequest(userId: string, house_id: string) {
+	await houseModel.updateOne({ _id: house_id }, { $pull: { pending_users: userId } });
 }
 
 async function generateCode(name: string) {
@@ -175,6 +198,14 @@ async function populateUsers(house: any, isOwner: boolean): Promise<any> {
 	}
 
 	return houseData;
+}
+
+async function remove_user(house_id: string, user_id: string): Promise<void> {
+	await userModel.findByIdAndUpdate(user_id, { $pull: { houses: house_id } }, { new: true });
+	//Triger -> ¿Cómo pasarle la constante house_id?. También faltaría poner que cuando una tarea en una casa solo tenga
+	// un usuario y este se sale, se elimine la tarea.
+	await taskModel.updateMany({ house_id: house_id }, { $pull: { users_id: user_id } });
+	await houseModel.updateOne({ _id: house_id }, { $pull: { users: user_id } });
 }
 
 export default new HouseFacade();

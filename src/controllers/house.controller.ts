@@ -24,6 +24,12 @@ class HouseController {
 	public async handleJoin(req: Request, res: Response): Promise<Response | undefined> {
 		return houseFacade.handleJoin(req, res);
 	}
+	public async leaveHouse(req: Request, res: Response): Promise<Response | undefined> {
+		return houseFacade.leaveHouse(req, res);
+	}
+	public async kickUser(req: Request, res: Response): Promise<Response | undefined> {
+		return houseFacade.kickUser(req, res);
+	}
 }
 
 export default new HouseController();

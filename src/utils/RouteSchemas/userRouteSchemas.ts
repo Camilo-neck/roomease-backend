@@ -16,9 +16,4 @@ const paramsSchema: Joi.ObjectSchema = Joi.object({
 	id: Joi.string().required(),
 });
 
-const leaveSchema: Joi.ObjectSchema = Joi.object({
-	id: Joi.string().required(),
-	houseId: Joi.string().required(),
-});
-
-export { leaveSchema, paramsSchema, updateUserSchema };
+export { paramsSchema, updateUserSchema };
