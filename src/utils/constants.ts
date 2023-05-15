@@ -14,3 +14,12 @@ export enum FIELD_TYPES {
 	QUERY = "query",
 	PARAMS = "params",
 }
+
+export enum NOTIFICATION_TYPES {
+	ACCEPTED_JOIN = "accepted_join",
+	REJECTED_JOIN = "rejected_join",
+	REQUEST_JOIN = "request_join", // llega a owner
+	ASSIGNED_TASK = "assigned_task",
+	COMPLETED_TASK = "completed_task",
+	USER_KICKED = "user_kicked",
+}
