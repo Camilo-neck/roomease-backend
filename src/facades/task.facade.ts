@@ -2,7 +2,8 @@ import { Request, Response } from "express";
 import { Types } from "mongoose";
 
 import { ServerError } from "@/errors/server.error";
-import { STATUS_CODES } from "@/utils/constants";
+import notificationFacade from "@/facades/notification.facade";
+import { NOTIFICATION_TYPES, STATUS_CODES } from "@/utils/constants";
 
 import taskModel from "../db/models/task.model";
 import userModel from "../db/models/user.model";
@@ -90,6 +91,15 @@ class TaskFacade {
 
 		task.done = !task.done;
 		task.save();
+
+		if (task.done) {
+			notificationFacade.create({
+				type: NOTIFICATION_TYPES.COMPLETED_TASK,
+				recipient: task.users_id[0],
+				house_id: task.house_id,
+				task_name: task.name,
+			});
+		}
 
 		return res.status(STATUS_CODES.OK).json({ message: `Task marked as ${task.done ? "done" : "undone"}` });
 	}
