@@ -34,7 +34,7 @@ taskSchema.post("findOneAndUpdate", async (doc) => {
 taskSchema.post("save", async (doc) => {
 	await userModel.updateMany(
 		{ _id: { $in: doc.users_id }, tasks: { $ne: doc._id.toString() } },
-		{ $addToSet: { tasks: doc._id.toString() } }
+		{ $addToSet: { tasks: doc._id.toString() } },
 	);
 });
 
