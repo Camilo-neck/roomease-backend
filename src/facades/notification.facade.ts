@@ -48,6 +48,16 @@ class NotificationFacade {
 			message: "Notification deleted successfully",
 		});
 	}
+
+	public async read(req: Request, res: Response): Promise<Response | undefined> {
+		const { notification_id } = req.params;
+
+		await notificationModel.findByIdAndUpdate(notification_id, { read: true });
+
+		return res.status(STATUS_CODES.OK).json({
+			message: "Notification read successfully",
+		});
+	}
 }
 
 function get_notification_data(data: any, user: any, house: any): any {

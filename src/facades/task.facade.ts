@@ -97,6 +97,7 @@ class TaskFacade {
 				type: NOTIFICATION_TYPES.COMPLETED_TASK,
 				recipient: task.users_id[0],
 				house_id: task.house_id,
+				is_read: false,
 				task_name: task.name,
 			});
 		}

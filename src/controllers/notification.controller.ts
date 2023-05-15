@@ -9,6 +9,9 @@ class NotificationController {
 	public async delete(req: Request, res: Response): Promise<Response | undefined> {
 		return notificationFacade.delete(req, res);
 	}
+	public async read(req: Request, res: Response): Promise<Response | undefined> {
+		return notificationFacade.read(req, res);
+	}
 }
 
 export default new NotificationController();

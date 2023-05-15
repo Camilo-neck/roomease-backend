@@ -9,5 +9,6 @@ const router = express.Router();
 
 router.get("/", [Auth], asyncError(notificationController.list));
 router.delete("/:notification_id", [Auth], asyncError(notificationController.delete));
+router.put("/:notification_id", [Auth], asyncError(notificationController.read));
 
 export default router;
