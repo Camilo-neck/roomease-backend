@@ -3,9 +3,10 @@ import { Request, Response } from "express";
 import houseModel from "@/db/models/house.model";
 import userModel from "@/db/models/user.model";
 import { ServerError } from "@/errors/server.error";
-import { STATUS_CODES } from "@/utils/constants";
 
 import taskModel from "../db/models/task.model";
+import { NOTIFICATION_TYPES, STATUS_CODES } from "../utils/constants";
+import { create_notifications } from "./notification.facade";
 
 class HouseFacade {
 	public async create(req: Request, res: Response): Promise<Response | undefined> {
@@ -58,16 +59,6 @@ class HouseFacade {
 
 			if (name !== house.name) house.house_code = await generateCode(name);
 
-			// house.set({
-			// 	name: name,
-			// 	description: description,
-			// 	house_picture: house_picture,
-			// 	address: address,
-			// 	tags: tags,
-			// });
-
-			//await taskModel.findOneAndUpdate({ _id: id }, updateTask, { new: true });
-
 			await houseModel.updateOne({ _id: house._id }, { name, description, house_picture, address, tags }, { new: true });
 
 			return res.status(STATUS_CODES.OK).json({ message: "House modified" });
@@ -88,7 +79,7 @@ class HouseFacade {
 		const { house_code } = req.params;
 		const house = req.house;
 
-		const user = await userModel.findById(req.userId);
+		const user: any = await userModel.findById(req.userId);
 
 		//check if user is already in house
 		const house_id: string = house._id.toString();
@@ -103,6 +94,16 @@ class HouseFacade {
 
 		//Add user to pending users
 		await houseModel.updateOne({ house_code }, { $push: { pending_users: req.userId } });
+
+		//Create notification
+		const owner = await userModel.findById(house.owner);
+		await create_notifications({
+			type: NOTIFICATION_TYPES.REQUEST_JOIN,
+			recipients: [owner?._id],
+			house_name: house.name,
+			user_name: user.name,
+		});
+
 		return res.status(STATUS_CODES.OK).json({ message: "Request sent" });
 	}
 
@@ -118,16 +119,17 @@ class HouseFacade {
 			throw new ServerError("User doesn't have a pending request", STATUS_CODES.BAD_REQUEST);
 		}
 
-		//Accept join request
-		if (accept) {
-			console.log(userId, houseId);
-			await acceptRequest(userId, houseId);
-			return res.status(STATUS_CODES.OK).json({ message: "Request accepted" });
-		}
+		if (accept) await acceptRequest(userId, houseId);
+		else await rejectRequest(userId, houseId);
 
-		//Reject join request
-		await rejectRequest(userId, houseId);
-		return res.status(STATUS_CODES.OK).json({ message: "Request rejected" });
+		//Create notification
+		await create_notifications({
+			type: accept ? NOTIFICATION_TYPES.ACCEPTED_JOIN : NOTIFICATION_TYPES.REJECTED_JOIN,
+			recipients: [userId],
+			house_name: house.name,
+		});
+
+		return res.status(STATUS_CODES.OK).json({ message: `${accept ? "Request accepted" : "Request rejected"}` });
 	}
 
 	public async leaveHouse(req: Request, res: Response): Promise<Response | undefined> {
@@ -164,6 +166,14 @@ class HouseFacade {
 			throw new ServerError("You can't kick yourself (owner), use /leave instead", STATUS_CODES.BAD_REQUEST);
 
 		await remove_user(house_id, user_id);
+
+		//Create notification
+		await create_notifications({
+			type: NOTIFICATION_TYPES.USER_KICKED,
+			recipients: [user_id],
+			house_name: req.house.name,
+		});
+
 		return res.status(STATUS_CODES.OK).json({ message: "User removed from house" });
 	}
 }

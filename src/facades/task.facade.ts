@@ -2,11 +2,12 @@ import { Request, Response } from "express";
 import { Types } from "mongoose";
 
 import { ServerError } from "@/errors/server.error";
-import notificationFacade from "@/facades/notification.facade";
-import { NOTIFICATION_TYPES, STATUS_CODES } from "@/utils/constants";
 
+import houseModel from "../db/models/house.model";
 import taskModel from "../db/models/task.model";
 import userModel from "../db/models/user.model";
+import { NOTIFICATION_TYPES, STATUS_CODES } from "../utils/constants";
+import { create_notifications } from "./notification.facade";
 
 class TaskFacade {
 	public async get(req: Request, res: Response): Promise<Response> {
@@ -41,7 +42,7 @@ class TaskFacade {
 	public async create(req: Request, res: Response): Promise<Response | undefined> {
 		const { users_id } = req.body;
 
-		await validate_users(users_id, req.house);
+		const users = await validate_users(users_id, req.house);
 
 		const taskData = req.body;
 		taskData["created_by"] = req.userId;
@@ -54,6 +55,14 @@ class TaskFacade {
 		const task = new taskModel(taskData);
 
 		await task.save();
+
+		//CREATE NOTIFICATION
+		await create_notifications({
+			type: NOTIFICATION_TYPES.ASSIGNED_TASK,
+			recipients: users.map((user: any) => user._id),
+			house_name: req.house.name,
+			task_name: task.name,
+		});
 
 		return res.status(STATUS_CODES.CREATED).json({
 			message: "Task created successfully",
@@ -87,17 +96,20 @@ class TaskFacade {
 		const taskId: string = req.params.id;
 		const userId = req.userId;
 
-		const task = await validate_task(taskId, userId);
+		const { task } = await validate_task(taskId, userId);
 
 		task.done = !task.done;
 		task.save();
 
+		//CREATE NOTIFICATION
+
+		const users = await userModel.find({ _id: { $in: task.users_id } });
+		const house = await houseModel.findById(task.house_id);
 		if (task.done) {
-			notificationFacade.create({
+			await create_notifications({
 				type: NOTIFICATION_TYPES.COMPLETED_TASK,
-				recipient: task.users_id[0],
-				house_id: task.house_id,
-				is_read: false,
+				recipients: users.map((user: any) => user._id),
+				house_name: house?.name,
 				task_name: task.name,
 			});
 		}
@@ -146,7 +158,7 @@ async function validate_task(task_id: string, user_id: string): Promise<any> {
 		throw new ServerError("The user does not have that task", STATUS_CODES.BAD_REQUEST);
 	}
 
-	return task;
+	return { task, user };
 }
 
 const get_week_tasks = (tasks: any[]) => {
