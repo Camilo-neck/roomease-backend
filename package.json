@@ -13,9 +13,6 @@
     "watch": "./node_modules/nodemon/bin/nodemon.js"
   },
   "keywords": [],
-  "engines": {
-    "node": "14.x"
-  },
   "author": "",
   "license": "ISC",
   "devDependencies": {
