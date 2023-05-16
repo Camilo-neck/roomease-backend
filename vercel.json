@@ -1,6 +1,6 @@
 {
 	"functions": {
-		"src/index.ts": {
+		"/src/index.ts": {
 			"runtime": "@vercel/node"
 		}
 	},
