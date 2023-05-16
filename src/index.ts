@@ -3,7 +3,7 @@ import "dotenv/config";
 import express from "express";
 import mongoose from "mongoose";
 
-import { App } from "@/app";
+import { App } from "./app";
 
 import config from "./config/config";
 import userRoutes from "./routes/user.routes";
