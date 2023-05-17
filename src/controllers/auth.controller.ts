@@ -2,15 +2,18 @@ import { Request, Response } from "express";
 
 import authFacade from "@/facades/auth.facade";
 
-class authControler {
-	//use facade to handle the logic
-	async register(req: Request, res: Response) {
+class AuthControler {
+	public async register(req: Request, res: Response): Promise<Response | undefined> {
 		return authFacade.register(req, res);
 	}
 
-	async login(req: Request, res: Response) {
+	public async login(req: Request, res: Response): Promise<Response | undefined> {
 		return authFacade.login(req, res);
+	}
+
+	public async refreshToken(req: Request, res: Response): Promise<Response | undefined> {
+		return authFacade.refreshToken(req, res);
 	}
 }
 
-export default new authControler();
+export default new AuthControler();
