@@ -1,10 +1,12 @@
+import { ObjectId } from "mongoose";
+
 export interface ITask {
 	name: string;
 	description: string;
 	house_id: string;
-	users_id: string[];
+	users_id: ObjectId[];
 	done: boolean;
-	crated_by: string;
+	created_by: ObjectId;
 
 	days?: string[];
 	start_date: Date;

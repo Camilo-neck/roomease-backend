@@ -1,6 +1,9 @@
 import { Request, Response } from "express";
-import { Types } from "mongoose";
+import { Document, ObjectId, Types } from "mongoose";
 
+import { IHouse } from "@/dtos/Ihouse.dto";
+import { ITask } from "@/dtos/ITask.dto";
+import { IUser } from "@/dtos/Iuser.dto";
 import { ServerError } from "@/errors/server.error";
 
 import houseModel from "../db/models/house.model";
@@ -12,7 +15,7 @@ import { create_notifications } from "./notification.facade";
 class TaskFacade {
 	public async get(req: Request, res: Response): Promise<Response> {
 		const { user_id, house_id } = req.query;
-		let tasks = undefined;
+		let tasks: Document<ITask>[] | undefined = undefined;
 
 		if (user_id === undefined) {
 			tasks = await taskModel.find({ house_id: house_id }).populate({
@@ -29,8 +32,8 @@ class TaskFacade {
 		}
 
 		//change users_id to users
-		tasks = tasks.map((task: any) => {
-			const taskObj: any = task.toObject();
+		tasks = tasks.map((task: Document<ITask>) => {
+			const taskObj = task.toObject();
 			taskObj["users"] = taskObj["users_id"];
 			delete taskObj["users_id"];
 			return taskObj;
@@ -42,9 +45,9 @@ class TaskFacade {
 	public async create(req: Request, res: Response): Promise<Response | undefined> {
 		const { users_id } = req.body;
 
-		const users = await validate_users(users_id, req.house);
+		const users: Document<IUser>[] = await validate_users(users_id, req.house);
 
-		const taskData = req.body;
+		const taskData: ITask = req.body;
 		taskData["created_by"] = req.userId;
 		taskData["done"] = false;
 
@@ -71,7 +74,7 @@ class TaskFacade {
 	}
 	public async update(req: Request, res: Response): Promise<Response | undefined> {
 		const { id } = req.params;
-		const updateTask = req.body;
+		const updateTask: ITask = req.body;
 
 		await validate_task(id, req.userId);
 		await validate_users(updateTask.users_id, req.house);
@@ -82,7 +85,7 @@ class TaskFacade {
 	}
 
 	public async delete(req: Request, res: Response): Promise<Response | undefined> {
-		const taskId: string = req.params.id;
+		const taskId = req.params.id;
 		const userId = req.userId;
 
 		await validate_task(taskId, userId);
@@ -93,7 +96,7 @@ class TaskFacade {
 	}
 
 	public async done(req: Request, res: Response): Promise<Response | undefined> {
-		const taskId: string = req.params.id;
+		const taskId = req.params.id;
 		const userId = req.userId;
 
 		const { task } = await validate_task(taskId, userId);
@@ -103,7 +106,7 @@ class TaskFacade {
 
 		//CREATE NOTIFICATION
 
-		const users = await userModel.find({ _id: { $in: task.users_id } });
+		const users: Document<IUser>[] = await userModel.find({ _id: { $in: task.users_id } });
 		const house = await houseModel.findById(task.house_id);
 		if (task.done) {
 			await create_notifications({
@@ -118,21 +121,21 @@ class TaskFacade {
 	}
 
 	public async list(req: Request, res: Response): Promise<Response | undefined> {
-		const tasks = await taskModel.find();
+		const tasks: Document<ITask>[] = await taskModel.find();
 		return res.status(STATUS_CODES.OK).json(tasks);
 	}
 }
 
 /////////////
 
-async function validate_users(users_id: string[], house: any = undefined): Promise<any> {
+async function validate_users(users_id: ObjectId[], house: any = undefined): Promise<any> {
 	const users = await userModel.find({ _id: { $in: users_id } });
 	if (users.length !== users_id.length) {
 		throw new ServerError("Invalid users, one or more users does not exist", STATUS_CODES.BAD_REQUEST);
 	}
 
 	if (house) {
-		if (!users_id.every((user_id: string) => house.users.includes(user_id))) {
+		if (!users_id.every((user_id: ObjectId) => house.users.includes(user_id))) {
 			throw new ServerError("Invalid users, one or more users does not belong to the house", STATUS_CODES.BAD_REQUEST);
 		}
 	}
@@ -161,13 +164,13 @@ async function validate_task(task_id: string, user_id: string): Promise<any> {
 	return { task, user };
 }
 
-const get_week_tasks = (tasks: any[]) => {
-	const today = new Date();
-	const firstDayOfWeek = new Date(today.setDate(today.getDate() - today.getDay()));
+const get_week_tasks = (tasks: Document<ITask>[]): Document<ITask>[] => {
+	const today: Date = new Date();
+	const firstDayOfWeek: Date = new Date(today.setDate(today.getDate() - today.getDay()));
 
 	return tasks.filter((task: any) => {
-		const t_date = task.until_date ? task.until_date : task.end_date;
-		const taskDate = new Date(t_date);
+		const t_date: Date = task.until_date ? task.until_date : task.end_date;
+		const taskDate: Date = new Date(t_date);
 		return taskDate >= firstDayOfWeek;
 	});
 };

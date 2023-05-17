@@ -1,7 +1,10 @@
 import { Request, Response } from "express";
+import { Document, ObjectId } from "mongoose";
 
 import houseModel from "@/db/models/house.model";
 import userModel from "@/db/models/user.model";
+import { IHouse } from "@/dtos/Ihouse.dto";
+import { IUser } from "@/dtos/Iuser.dto";
 import { ServerError } from "@/errors/server.error";
 
 import taskModel from "../db/models/task.model";
@@ -10,14 +13,14 @@ import { create_notifications } from "./notification.facade";
 
 class HouseFacade {
 	public async create(req: Request, res: Response): Promise<Response | undefined> {
-		const { name, users } = req.body;
+		const { name, users }: { name: string; users: ObjectId[] } = req.body;
 
 		if (name.includes("_")) throw new ServerError("Invalid name, name can't contain '_'", STATUS_CODES.BAD_REQUEST);
 
 		users.push(req.userId);
 
-		const house_code = await generateCode(name);
-		const houseData = req.body;
+		const house_code: string = await generateCode(name);
+		const houseData: IHouse = req.body;
 
 		houseData["owner"] = req.userId;
 		houseData["pending_users"] = [];
@@ -28,7 +31,7 @@ class HouseFacade {
 			houseData["house_picture"] =
 				"https://images.adsttc.com/media/images/5d34/e507/284d/d109/5600/0240/large_jpg/_FI.jpg?1563747560";
 
-		const house = new houseModel(houseData);
+		const house: Document = new houseModel(houseData);
 		await house.save();
 
 		return res.status(STATUS_CODES.CREATED).json({
@@ -39,33 +42,28 @@ class HouseFacade {
 	}
 
 	public async list(req: Request, res: Response): Promise<Response | undefined> {
-		const houses = await houseModel.find();
+		const houses: Document<IHouse>[] = await houseModel.find();
 		return res.status(STATUS_CODES.OK).json(houses);
 	}
 
 	public async getById(req: Request, res: Response): Promise<Response | undefined> {
-		const isOwner = req.house.owner === req.userId;
-		const house = await populateUsers(req.house, isOwner);
+		const isOwner: boolean = req.house.owner === req.userId;
+		const house: IHouse = await populateUsers(req.house, isOwner);
 
 		return res.status(STATUS_CODES.OK).json(house);
 	}
 
 	public async update(req: Request, res: Response): Promise<Response | undefined> {
-		try {
-			const { name, description, house_picture, address, tags } = req.body;
-			const house = req.house;
+		const { name, description, house_picture, address, tags }: IHouse = req.body;
+		const house = req.house;
 
-			if (name.includes("_")) throw new ServerError("Invalid name, name can't contain '_'", STATUS_CODES.BAD_REQUEST);
+		if (name.includes("_")) throw new ServerError("Invalid name, name can't contain '_'", STATUS_CODES.BAD_REQUEST);
 
-			if (name !== house.name) house.house_code = await generateCode(name);
+		if (name !== house.name) house.house_code = await generateCode(name);
 
-			await houseModel.updateOne({ _id: house._id }, { name, description, house_picture, address, tags }, { new: true });
+		await houseModel.updateOne({ _id: house._id }, { name, description, house_picture, address, tags }, { new: true });
 
-			return res.status(STATUS_CODES.OK).json({ message: "House modified" });
-		} catch (error: any) {
-			console.log(error);
-			return res.status(STATUS_CODES.BAD_REQUEST).json({ message: error.message });
-		}
+		return res.status(STATUS_CODES.OK).json({ message: "House modified" });
 	}
 
 	public async delete(req: Request, res: Response): Promise<Response | undefined> {
@@ -79,7 +77,7 @@ class HouseFacade {
 		const { house_code } = req.params;
 		const house = req.house;
 
-		const user: any = await userModel.findById(req.userId);
+		const user = await userModel.findById(req.userId);
 
 		//check if user is already in house
 		const house_id: string = house._id.toString();
@@ -96,25 +94,25 @@ class HouseFacade {
 		await houseModel.updateOne({ house_code }, { $push: { pending_users: req.userId } });
 
 		//Create notification
-		const owner = await userModel.findById(house.owner);
+		const owner: Document | null = await userModel.findById(house.owner);
 		await create_notifications({
 			type: NOTIFICATION_TYPES.REQUEST_JOIN,
 			recipients: [owner?._id],
 			house_name: house.name,
-			user_name: user.name,
+			user_name: user?.name,
 		});
 
 		return res.status(STATUS_CODES.OK).json({ message: "Request sent" });
 	}
 
 	public async handleJoin(req: Request, res: Response): Promise<Response | undefined> {
-		const { userId, accept } = req.body;
+		const { userId, accept }: { userId: ObjectId; accept: boolean } = req.body;
 
-		const { houseId } = req.params;
+		const { houseId }: any = req.params;
 		const house = req.house;
 
 		//check if user has a pending request
-		const userHasPendingRequest = house.pending_users.includes(userId);
+		const userHasPendingRequest: boolean = house.pending_users.includes(userId);
 		if (!userHasPendingRequest) {
 			throw new ServerError("User doesn't have a pending request", STATUS_CODES.BAD_REQUEST);
 		}
@@ -133,8 +131,8 @@ class HouseFacade {
 	}
 
 	public async leaveHouse(req: Request, res: Response): Promise<Response | undefined> {
-		const house_id = req.params.houseId;
-		const user_id = req.userId;
+		const { house_id }: any = req.params;
+		const user_id: ObjectId = req.userId;
 
 		await remove_user(house_id, user_id);
 
@@ -158,7 +156,7 @@ class HouseFacade {
 	public async kickUser(req: Request, res: Response): Promise<Response | undefined> {
 		const { house_id, user_id }: any = req.query;
 
-		const user = await userModel.findById(user_id);
+		const user: Document<IUser> | null = await userModel.findById(user_id);
 		if (!user) throw new ServerError("User not found", STATUS_CODES.NOT_FOUND);
 		if (!req.house.users.includes(user_id))
 			throw new ServerError("User doesn't belong to house", STATUS_CODES.BAD_REQUEST);
@@ -180,12 +178,12 @@ class HouseFacade {
 
 //////////// Helper functions ////////////
 
-async function acceptRequest(userId: string, house_id: string) {
+async function acceptRequest(userId: ObjectId, house_id: ObjectId) {
 	await houseModel.updateOne({ _id: house_id }, { $push: { users: userId }, $pull: { pending_users: userId } });
 	await userModel.updateOne({ _id: userId }, { $push: { houses: house_id } });
 }
 
-async function rejectRequest(userId: string, house_id: string) {
+async function rejectRequest(userId: ObjectId, house_id: ObjectId) {
 	await houseModel.updateOne({ _id: house_id }, { $pull: { pending_users: userId } });
 }
 
@@ -199,7 +197,7 @@ async function generateCode(name: string) {
 	return house_code;
 }
 
-async function populateUsers(house: any, isOwner: boolean): Promise<any> {
+async function populateUsers(house: any, isOwner: boolean): Promise<IHouse> {
 	let houseData = undefined;
 	if (!isOwner) {
 		houseData = await house.populate({
@@ -225,7 +223,7 @@ async function populateUsers(house: any, isOwner: boolean): Promise<any> {
 	return houseData;
 }
 
-async function remove_user(house_id: string, user_id: string): Promise<void> {
+async function remove_user(house_id: ObjectId, user_id: ObjectId): Promise<void> {
 	await userModel.findByIdAndUpdate(user_id, { $pull: { houses: house_id } }, { new: true });
 	//Triger -> ¿Cómo pasarle la constante house_id?. También faltaría poner que cuando una tarea en una casa solo tenga
 	// un usuario y este se sale, se elimine la tarea.
