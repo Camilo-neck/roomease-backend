@@ -203,7 +203,7 @@ async function populateUsers(house: any, isOwner: boolean): Promise<IHouse> {
 	if (!isOwner) {
 		houseData = await house.populate({
 			path: "users",
-			select: "name email",
+			select: "name email profile_picture",
 		});
 		//exclude pending users
 		const { pending_users, ...rest } = house._doc;
@@ -212,11 +212,11 @@ async function populateUsers(house: any, isOwner: boolean): Promise<IHouse> {
 		houseData = await house.populate([
 			{
 				path: "users",
-				select: "name email",
+				select: "name email profile_picture",
 			},
 			{
 				path: "pending_users",
-				select: "name email",
+				select: "name email profile_picture",
 			},
 		]);
 	}
