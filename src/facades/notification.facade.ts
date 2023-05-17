@@ -32,7 +32,7 @@ class NotificationFacade {
 }
 
 export const create_notifications = async (data: any) => {
-	const notificationsData = data.recipients.map((recipient: any) => {
+	const notificationsData = data.recipients.map((recipient: unknown) => {
 		return get_notification_data({ ...data, recipient, recipients: undefined });
 	});
 
@@ -84,7 +84,7 @@ function get_notification_data(data: any): any {
 	notificationData.recipient = recipient_id;
 	notificationData.type = type;
 
-	notificationData.read = false;
+	notificationData.is_read = false;
 
 	return notificationData;
 }
