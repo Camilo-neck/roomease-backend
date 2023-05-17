@@ -1,12 +1,14 @@
 import { Request, Response } from "express";
+import { Document, ObjectId } from "mongoose";
 
 import notificationModel from "@/db/models/notification.model";
+import { INotification } from "@/dtos/INotification.dto";
 import { NOTIFICATION_TYPES, STATUS_CODES } from "@/utils/constants";
 
 class NotificationFacade {
 	public async list(req: Request, res: Response): Promise<Response | undefined> {
-		const userId = req.userId;
-		const notifications = await notificationModel.find({ recipient: userId });
+		const userId: ObjectId = req.userId;
+		const notifications: Document[] = await notificationModel.find({ recipient: userId });
 		return res.status(STATUS_CODES.OK).json(notifications);
 	}
 
@@ -31,62 +33,74 @@ class NotificationFacade {
 	}
 }
 
-export const create_notifications = async (data: any) => {
-	const notificationsData = data.recipients.map((recipient: unknown) => {
-		return get_notification_data({ ...data, recipient, recipients: undefined });
+export const create_notifications = async (data: ICreateNotification): Promise<void> => {
+	const notificationsData: INotification[] = data.recipients.map((recipient: ObjectId) => {
+		return get_notification_data({ ...data, recipients: [recipient] });
 	});
 
 	await notificationModel.insertMany(notificationsData);
 };
 
-function get_notification_data(data: any): any {
-	const notificationData: any = {};
+function get_notification_data(data: ICreateNotification): INotification {
+	const type: NOTIFICATION_TYPES = data.type;
+	const recipient_id: ObjectId = data.recipients[0];
 
-	const type = data.type;
-	const recipient_id = data.recipient;
+	const house_name: string | undefined = data.house_name;
+	const task_name: string | undefined = data.task_name;
+	const user_name: string | undefined = data.user_name;
 
-	const house_name = data.house_name;
-	const task_name = data.task_name;
-	const user_name = data.user_name;
+	let description = "";
+	let title = "";
 
 	switch (type) {
 		case NOTIFICATION_TYPES.ACCEPTED_JOIN:
-			notificationData.description = `Tu solicitud para unirte a la casa ${house_name} ha sido aceptada`;
-			notificationData.title = `Solicitud aceptada`;
+			description = `Tu solicitud para unirte a la casa ${house_name} ha sido aceptada`;
+			title = `Solicitud aceptada`;
 			break;
 
 		case NOTIFICATION_TYPES.REJECTED_JOIN:
-			notificationData.description = `Tu solicitud para unirte a la casa ${house_name} ha sido rechazada`;
-			notificationData.title = `Solicitud rechazada`;
+			description = `Tu solicitud para unirte a la casa ${house_name} ha sido rechazada`;
+			title = `Solicitud rechazada`;
 			break;
 
 		case NOTIFICATION_TYPES.REQUEST_JOIN:
-			notificationData.description = `El usuario ${user_name} quiere unirse a tu casa ${house_name}`;
-			notificationData.title = `Solicitud de unión`;
+			description = `El usuario ${user_name} quiere unirse a tu casa ${house_name}`;
+			title = `Solicitud de unión`;
 			break;
 
 		case NOTIFICATION_TYPES.ASSIGNED_TASK:
-			notificationData.description = `Se te ha asignado la tarea ${task_name} en la casa ${house_name}`;
-			notificationData.title = `Tarea asignada`;
+			description = `Se te ha asignado la tarea ${task_name} en la casa ${house_name}`;
+			title = `Tarea asignada`;
 			break;
 
 		case NOTIFICATION_TYPES.COMPLETED_TASK:
-			notificationData.description = `La tarea ${task_name} ha sido completada en la casa ${house_name}`;
-			notificationData.title = `Tarea completada`;
+			description = `La tarea ${task_name} ha sido completada en la casa ${house_name}`;
+			title = `Tarea completada`;
 			break;
 
 		case NOTIFICATION_TYPES.USER_KICKED:
-			notificationData.description = `Has sido expulsado de la casa ${house_name}`;
-			notificationData.title = `Expulsado`;
+			description = `Has sido expulsado de la casa ${house_name}`;
+			title = `Expulsado`;
 			break;
 	}
 
-	notificationData.recipient = recipient_id;
-	notificationData.type = type;
-
-	notificationData.is_read = false;
+	const notificationData: INotification = {
+		recipient: recipient_id,
+		type: type,
+		read: false,
+		description: description,
+		title: title,
+	};
 
 	return notificationData;
+}
+
+interface ICreateNotification {
+	type: NOTIFICATION_TYPES;
+	recipients: ObjectId[];
+	house_name?: string;
+	task_name?: string;
+	user_name?: string;
 }
 
 export default new NotificationFacade();
