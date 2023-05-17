@@ -131,19 +131,19 @@ class HouseFacade {
 	}
 
 	public async leaveHouse(req: Request, res: Response): Promise<Response | undefined> {
-		const { house_id }: any = req.params;
+		const { houseId }: any = req.params;
 		const user_id: ObjectId = req.userId;
 
-		await remove_user(house_id, user_id);
+		await remove_user(houseId, user_id);
 
-		const house = await houseModel.findById(house_id);
+		const house = await houseModel.findById(houseId);
 
 		if (user_id == house?.owner) {
 			if (house?.users.length > 0) {
-				await houseModel.updateOne({ _id: house_id }, { owner: house?.users[0] });
+				await houseModel.updateOne({ _id: houseId }, { owner: house?.users[0] });
 			} else {
-				await houseModel.deleteOne({ _id: house_id });
-				await taskModel.deleteMany({ house_id });
+				await houseModel.deleteOne({ _id: houseId });
+				await taskModel.deleteMany({ houseId });
 				return res.status(STATUS_CODES.OK).json({
 					message: "The user leaves the house, the house was deleted because there are no more users left in the house",
 				});
