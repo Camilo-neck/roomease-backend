@@ -18,8 +18,7 @@ const userSchema = new Schema(
 		phone: { type: String, required: true },
 		description: { type: String, required: true },
 		profile_picture: { type: String, required: false },
-		tags: { type: [String], required: false }, //add ref later
-		scores: { type: [String], required: true }, //add ref later
+		tags: { type: [String], required: false },
 		tasks: { type: [String], required: true }, //add ref later
 		houses: { type: [String], required: true, ref: "House" },
 	},

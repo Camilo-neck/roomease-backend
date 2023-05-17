@@ -8,7 +8,6 @@ const updateUserSchema: Joi.ObjectSchema = Joi.object({
 	description: Joi.string().required(),
 	profile_picture: Joi.string().optional(),
 	tags: Joi.array().items(Joi.string()).optional(),
-	scores: Joi.array().items(Joi.string()).required(),
 }).options({ abortEarly: false });
 
 const paramsSchema: Joi.ObjectSchema = Joi.object({
