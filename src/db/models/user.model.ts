@@ -1,5 +1,6 @@
 import bcrypt from "bcryptjs";
 import mongoose from "mongoose";
+import { ObjectId } from "mongoose";
 
 import { IUser } from "@/dtos/Iuser.dto";
 
@@ -28,10 +29,6 @@ const userSchema = new Schema(
 userSchema.post("deleteOne", async (doc) => {
 	await houseModel.updateMany({ $pull: { users: doc._id } });
 	await taskModel.updateMany({ $pull: { users: doc._id } });
-});
-
-userSchema.post("findOneAndUpdate", async (doc) => {
-	//
 });
 
 userSchema.methods.encryptPassword = async (password: string): Promise<string> => {
