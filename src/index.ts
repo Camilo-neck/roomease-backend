@@ -1,7 +1,6 @@
 import "dotenv/config";
 
-import { App } from "@/app";
-
+import { App } from "./app";
 import dbConnect from "./db/dbConnect";
 
 // Create a new express application instance

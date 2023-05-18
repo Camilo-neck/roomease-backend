@@ -3,13 +3,13 @@ import express, { Application } from "express";
 import helmet from "helmet";
 import morgan from "morgan";
 
-import errorMiddleware from "@/middlewares/error.middleware";
-import authRoutes from "@/routes/auth.routes";
-import helloRoutes from "@/routes/hello.routes";
-import houseRoutes from "@/routes/house.routes";
-import notificationRoutes from "@/routes/notification.routes";
-import taskRoutes from "@/routes/task.routes";
-import userRoutes from "@/routes/user.routes";
+import errorMiddleware from "./middlewares/error.middleware";
+import authRoutes from "./routes/auth.routes";
+import helloRoutes from "./routes/hello.routes";
+import houseRoutes from "./routes/house.routes";
+import notificationRoutes from "./routes/notification.routes";
+import taskRoutes from "./routes/task.routes";
+import userRoutes from "./routes/user.routes";
 
 export class App {
 	private readonly _app: Application;

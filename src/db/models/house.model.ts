@@ -1,7 +1,6 @@
 import mongoose from "mongoose";
 
-import { IHouse } from "@/dtos/Ihouse.dto";
-
+import { IHouse } from "../../dtos/Ihouse.dto";
 import taskModel from "./task.model";
 import userModel from "./user.model";
 

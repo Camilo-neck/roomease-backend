@@ -2,11 +2,10 @@ import { Request, Response } from "express";
 import jwt from "jsonwebtoken";
 import { Document, ObjectId } from "mongoose";
 
-import { IUser } from "@/dtos/Iuser.dto";
-import { ServerError } from "@/errors/server.error";
-import { STATUS_CODES } from "@/utils/constants";
-
 import userModel from "../db/models/user.model";
+import { IUser } from "../dtos/Iuser.dto";
+import { ServerError } from "../errors/server.error";
+import { STATUS_CODES } from "../utils/constants";
 
 class AuthFacade {
 	public async register(req: Request, res: Response): Promise<Response | undefined> {

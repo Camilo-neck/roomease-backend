@@ -2,13 +2,12 @@ import { Request, Response } from "express";
 import { Types } from "mongoose";
 import { Document, ObjectId } from "mongoose";
 
-import { IHouse } from "@/dtos/Ihouse.dto";
-import { IUser } from "@/dtos/Iuser.dto";
-import { ServerError } from "@/errors/server.error";
-import { STATUS_CODES } from "@/utils/constants";
-
 import houseModel from "../db/models/house.model";
 import userModel from "../db/models/user.model";
+import { IHouse } from "../dtos/Ihouse.dto";
+import { IUser } from "../dtos/Iuser.dto";
+import { ServerError } from "../errors/server.error";
+import { STATUS_CODES } from "../utils/constants";
 
 class UserFacade {
 	public async listUsers(req: Request, res: Response): Promise<Response | undefined> {

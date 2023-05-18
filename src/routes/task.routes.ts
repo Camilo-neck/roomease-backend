@@ -1,14 +1,13 @@
 import express from "express";
 
-import taskController from "@/controllers/task.controller";
-import { Auth } from "@/middlewares/auth.middleware";
-import { BelongsToHouse } from "@/middlewares/belongsToHouse.middleware";
-import { HouseExist } from "@/middlewares/houseExists.middleware";
-import { SchemaValidator } from "@/middlewares/schemaValidator.middeware";
-import { createTaskSchema, paramsSchema, querySchema, updateTaskSchema } from "@/utils/RouteSchemas/taskRouteSchemas";
-
+import taskController from "../controllers/task.controller";
 import asyncError from "../middlewares/asyncError.middleware";
+import { Auth } from "../middlewares/auth.middleware";
+import { BelongsToHouse } from "../middlewares/belongsToHouse.middleware";
+import { HouseExist } from "../middlewares/houseExists.middleware";
+import { SchemaValidator } from "../middlewares/schemaValidator.middeware";
 import { FIELD_TYPES } from "../utils/constants";
+import { createTaskSchema, paramsSchema, querySchema, updateTaskSchema } from "../utils/RouteSchemas/taskRouteSchemas";
 
 const router = express.Router();
 

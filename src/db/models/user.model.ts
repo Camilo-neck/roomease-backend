@@ -1,8 +1,7 @@
 import bcrypt from "bcryptjs";
 import mongoose from "mongoose";
 
-import { IUser } from "@/dtos/Iuser.dto";
-
+import { IUser } from "../../dtos/Iuser.dto";
 import houseModel from "./house.model";
 import taskModel from "./task.model";
 

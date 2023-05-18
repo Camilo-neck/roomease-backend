@@ -1,12 +1,11 @@
 import express from "express";
 
-import asyncError from "@/middlewares/asyncError.middleware";
-import { Auth } from "@/middlewares/auth.middleware";
-import { SchemaValidator } from "@/middlewares/schemaValidator.middeware";
-import { FIELD_TYPES } from "@/utils/constants";
-import { paramsSchema, updateUserSchema } from "@/utils/RouteSchemas/userRouteSchemas";
-
 import userController from "../controllers/user.controller";
+import asyncError from "../middlewares/asyncError.middleware";
+import { Auth } from "../middlewares/auth.middleware";
+import { SchemaValidator } from "../middlewares/schemaValidator.middeware";
+import { FIELD_TYPES } from "../utils/constants";
+import { paramsSchema, updateUserSchema } from "../utils/RouteSchemas/userRouteSchemas";
 
 const router = express.Router();
 

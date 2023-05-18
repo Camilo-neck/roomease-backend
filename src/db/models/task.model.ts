@@ -1,9 +1,8 @@
 import mongoose from "mongoose";
 
-import { ITask } from "@/dtos/ITask.dto";
-import { ServerError } from "@/errors/server.error";
-import { STATUS_CODES } from "@/utils/constants";
-
+import { ITask } from "../../dtos/ITask.dto";
+import { ServerError } from "../../errors/server.error";
+import { STATUS_CODES } from "../../utils/constants";
 import userModel from "./user.model";
 
 const Schema = mongoose.Schema;

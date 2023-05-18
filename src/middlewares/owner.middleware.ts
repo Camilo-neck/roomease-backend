@@ -1,7 +1,7 @@
 import { NextFunction, Request, Response } from "express";
 import { ObjectId } from "mongoose";
 
-import { STATUS_CODES } from "@/utils/constants";
+import { STATUS_CODES } from "../utils/constants";
 
 export const Owner = (req: Request, res: Response, next: NextFunction) => {
 	const user_id: ObjectId = req.userId;

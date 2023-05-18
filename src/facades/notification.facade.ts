@@ -1,9 +1,9 @@
 import { Request, Response } from "express";
 import { Document, ObjectId } from "mongoose";
 
-import notificationModel from "@/db/models/notification.model";
-import { INotification } from "@/dtos/INotification.dto";
-import { NOTIFICATION_TYPES, STATUS_CODES } from "@/utils/constants";
+import notificationModel from "../db/models/notification.model";
+import { INotification } from "../dtos/INotification.dto";
+import { NOTIFICATION_TYPES, STATUS_CODES } from "../utils/constants";
 
 class NotificationFacade {
 	public async list(req: Request, res: Response): Promise<Response | undefined> {
