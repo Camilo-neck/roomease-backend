@@ -20,12 +20,12 @@ class TaskFacade {
 		if (user_id === undefined) {
 			tasks = await taskModel.find({ house_id: house_id }).populate({
 				path: "users_id",
-				select: "name email",
+				select: "name email profile_picture",
 			});
 		} else {
 			tasks = await taskModel.find({ house_id: house_id, users_id: user_id }).populate({
 				path: "users_id",
-				select: "name email",
+				select: "name email profile_picture",
 			});
 
 			tasks = get_week_tasks(tasks);

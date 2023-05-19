@@ -31,9 +31,9 @@ userSchema.post("deleteOne", async (doc) => {
 });
 
 userSchema.post("findOneAndUpdate", async function (doc) {
-	doc.password = await doc.encryptPassword(doc.password); 
-	await doc.save(); 
-  });
+	doc.password = await doc.encryptPassword(doc.password);
+	await doc.save();
+});
 
 userSchema.methods.encryptPassword = async (password: string): Promise<string> => {
 	const salt = await bcrypt.genSalt(10);
