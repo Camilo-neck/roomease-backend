@@ -1,14 +1,13 @@
 import express from "express";
 
-import asyncError from "@/middlewares/asyncError.middleware";
-import { Auth } from "@/middlewares/auth.middleware";
-import { BelongsToHouse } from "@/middlewares/belongsToHouse.middleware";
-import { HouseExist } from "@/middlewares/houseExists.middleware";
-import { Owner } from "@/middlewares/owner.middleware";
-import { SchemaValidator } from "@/middlewares/schemaValidator.middeware";
-import { FIELD_TYPES } from "@/utils/constants";
-
 import houseController from "../controllers/house.controller";
+import asyncError from "../middlewares/asyncError.middleware";
+import { Auth } from "../middlewares/auth.middleware";
+import { BelongsToHouse } from "../middlewares/belongsToHouse.middleware";
+import { HouseExist } from "../middlewares/houseExists.middleware";
+import { Owner } from "../middlewares/owner.middleware";
+import { SchemaValidator } from "../middlewares/schemaValidator.middeware";
+import { FIELD_TYPES } from "../utils/constants";
 import {
 	createHouseSchema,
 	handleJoinSchema,

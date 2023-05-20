@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 
-import userFacade from "@/facades/user.facade";
+import userFacade from "../facades/user.facade";
 
 class UserControler {
 	public async profile(req: Request, res: Response): Promise<Response | undefined> {

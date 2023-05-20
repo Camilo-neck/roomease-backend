@@ -1,14 +1,13 @@
 import { Request, Response } from "express";
 import { Document, ObjectId } from "mongoose";
 
-import houseModel from "@/db/models/house.model";
-import userModel from "@/db/models/user.model";
+import houseModel from "../db/models/house.model";
+import userModel from "../db/models/user.model";
 const userSchema = userModel.schema;
-import { IHouse } from "@/dtos/Ihouse.dto";
-import { IUser } from "@/dtos/Iuser.dto";
-import { ServerError } from "@/errors/server.error";
-
 import taskModel from "../db/models/task.model";
+import { IHouse } from "../dtos/Ihouse.dto";
+import { IUser } from "../dtos/Iuser.dto";
+import { ServerError } from "../errors/server.error";
 import { NOTIFICATION_TYPES, STATUS_CODES } from "../utils/constants";
 import { create_notifications } from "./notification.facade";
 

@@ -1,8 +1,8 @@
 import { NextFunction, Request, Response } from "express";
 import { Document, ObjectId, Types } from "mongoose";
 
-import houseModel from "@/db/models/house.model";
-import { FIELD_TYPES, STATUS_CODES } from "@/utils/constants";
+import houseModel from "../db/models/house.model";
+import { FIELD_TYPES, STATUS_CODES } from "../utils/constants";
 
 export const HouseExist = (field: string) => {
 	async function houseExist(req: Request, res: Response, next: NextFunction) {

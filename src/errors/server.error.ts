@@ -1,4 +1,4 @@
-import { STATUS_CODES } from "@/utils/constants";
+import { STATUS_CODES } from "../utils/constants";
 
 export class ServerError extends Error {
 	private readonly _code: STATUS_CODES;

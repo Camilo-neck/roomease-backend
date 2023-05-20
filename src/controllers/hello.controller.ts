@@ -1,8 +1,8 @@
 import { Request, Response } from "express";
 
-import { ServerError } from "@/errors/server.error";
-import helloFacade from "@/facades/hello.facade";
-import { STATUS_CODES } from "@/utils/constants";
+import { ServerError } from "../errors/server.error";
+import helloFacade from "../facades/hello.facade";
+import { STATUS_CODES } from "../utils/constants";
 
 class HelloController {
 	public async hello(req: Request, res: Response): Promise<void> {

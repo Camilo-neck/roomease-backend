@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 
-import notificationFacade from "@/facades/notification.facade";
+import notificationFacade from "../facades/notification.facade";
 
 class NotificationController {
 	public async list(req: Request, res: Response): Promise<Response | undefined> {

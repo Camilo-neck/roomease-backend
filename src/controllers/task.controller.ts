@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 
-import taskFacade from "@/facades/task.facade";
+import taskFacade from "../facades/task.facade";
 
 class TaskController {
 	public async get(req: Request, res: Response): Promise<Response | undefined> {

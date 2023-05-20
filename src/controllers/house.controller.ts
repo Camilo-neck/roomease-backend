@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 
-import houseFacade from "@/facades/house.facade";
+import houseFacade from "../facades/house.facade";
 
 class HouseController {
 	public async create(req: Request, res: Response): Promise<Response | undefined> {

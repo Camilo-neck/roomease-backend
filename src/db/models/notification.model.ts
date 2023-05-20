@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
 
-import { INotification } from "@/dtos/INotification.dto";
+import { INotification } from "../../dtos/INotification.dto";
 
 const Schema = mongoose.Schema;
 

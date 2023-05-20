@@ -1,9 +1,8 @@
 import express from "express";
 
-import asyncError from "@/middlewares/asyncError.middleware";
-import { Auth } from "@/middlewares/auth.middleware";
-
 import notificationController from "../controllers/notification.controller";
+import asyncError from "../middlewares/asyncError.middleware";
+import { Auth } from "../middlewares/auth.middleware";
 
 const router = express.Router();
 
