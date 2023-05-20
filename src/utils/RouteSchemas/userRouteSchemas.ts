@@ -2,7 +2,7 @@ import Joi from "joi";
 
 const updateUserSchema: Joi.ObjectSchema = Joi.object({
 	name: Joi.string().required(),
-	password: Joi.string().pattern(new RegExp("^[a-zA-Z0-9]{3,30}$")).required(),
+	password: Joi.string().pattern(new RegExp("^[a-zA-Z0-9]{3,30}$")).optional(),
 	birth_date: Joi.date().required(),
 	phone: Joi.string().required(),
 	description: Joi.string().required(),
