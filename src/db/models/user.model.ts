@@ -51,12 +51,12 @@ userSchema.post("deleteOne", async function (doc) {
 	}
 });
 
-userSchema.post("findOneAndUpdate", async function (doc) {
-	console.log("Hola");
-	
-	doc.password = await doc.encryptPassword(doc.password);
-	await doc.save();
-});
+// userSchema.post("findOneAndUpdate", async function (doc) {
+// 	console.log("Hola");
+
+// 	doc.password = await doc.encryptPassword(doc.password);
+// 	await doc.save();
+// });
 
 userSchema.methods.encryptPassword = async (password: string): Promise<string> => {
 	const salt = await bcrypt.genSalt(10);
