@@ -32,17 +32,18 @@ const userSchema = new Schema(
 let deletedUserId: string;
 
 userSchema.pre("deleteOne", async function () {
-  const doc = await this.model.findOne(this.getQuery());
-  deletedUserId = doc._id;
+	const doc = await this.model.findOne(this.getQuery());
+	console.log(doc);
+	
 });
 
-userSchema.post("deleteOne", async function (doc) {
-	const deletedUserId = doc._id;
-	console.log("ID del usuario eliminado:", deletedUserId);
+// userSchema.post("deleteOne", async function (doc) {
+// 	const deletedUserId = doc._id;
+// 	console.log("ID del usuario eliminado:", deletedUserId);
 
-	// Resto de la lógica aquí
-	// ...
-});
+// 	// Resto de la lógica aquí
+// 	// ...
+// });
 
 // userSchema.post("deleteOne", async function (doc) {
 // 	const session = await mongoose.startSession();
