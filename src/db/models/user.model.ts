@@ -31,7 +31,6 @@ userSchema.post("deleteOne", async function (doc) {
 	const session = await mongoose.startSession();
 	session.startTransaction();
 	console.log("hola");
-	
 
 	try {
 		// Eliminar usuario de la colección "houses"
