@@ -52,6 +52,8 @@ userSchema.post("deleteOne", async function (doc) {
 });
 
 userSchema.post("findOneAndUpdate", async function (doc) {
+	console.log("Hola");
+	
 	doc.password = await doc.encryptPassword(doc.password);
 	await doc.save();
 });
