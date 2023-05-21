@@ -45,7 +45,6 @@ userSchema.post("deleteOne", async function (doc) {
 		// Anular la transacción en caso de error
 		await session.abortTransaction();
 		console.log(error);
-		
 	} finally {
 		// Finalizar la sesión
 		session.endSession();

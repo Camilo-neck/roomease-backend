@@ -24,17 +24,17 @@ const taskSchema = new Schema(
 	{ timestamps: true },
 );
 
-taskSchema.post("updateMany", async (doc) => {
-	const tasksToDelete = await taskModel.find({ users_id: { $size: 0 } });
+// taskSchema.post("updateMany", async (doc) => {
+// 	const tasksToDelete = await taskModel.find({ users_id: { $size: 0 } });
 
-	if (tasksToDelete.length > 0) {
-		tasksToDelete.forEach(async (task) => {
-			await taskModel.findOneAndDelete({ _id: task._id });
-		});
-	} else {
-		console.log("No se encontraron tareas para eliminar.");
-	}
-});
+// 	if (tasksToDelete.length > 0) {
+// 		tasksToDelete.forEach(async (task) => {
+// 			await taskModel.findOneAndDelete({ _id: task._id });
+// 		});
+// 	} else {
+// 		console.log("No se encontraron tareas para eliminar.");
+// 	}
+// });
 
 const taskModel = mongoose.model<ITask>("Task", taskSchema);
 
