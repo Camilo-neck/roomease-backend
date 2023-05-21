@@ -29,13 +29,20 @@ const userSchema = new Schema(
 // 	await taskModel.updateMany({ $pull: { users_id: doc._id } });
 // });
 
+let deletedUserId: string;
+
+userSchema.pre("deleteOne", async function () {
+  const doc = await this.model.findOne(this.getQuery());
+  deletedUserId = doc._id;
+});
+
 userSchema.post("deleteOne", async function (doc) {
 	const deletedUserId = doc._id;
 	console.log("ID del usuario eliminado:", deletedUserId);
-  
+
 	// Resto de la lógica aquí
 	// ...
-  });
+});
 
 // userSchema.post("deleteOne", async function (doc) {
 // 	const session = await mongoose.startSession();
