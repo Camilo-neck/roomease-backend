@@ -23,7 +23,7 @@ const userSchema = new Schema(
 );
 
 userSchema.post("deleteOne", async (doc) => {
-	console.log(doc._id);
+	console.log(doc);
 
 	await houseModel.updateMany({ $pull: { users: doc._id } });
 	await taskModel.updateMany({ $pull: { users_id: doc._id } });
