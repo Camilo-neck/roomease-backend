@@ -53,11 +53,7 @@ class TaskFacade {
 			tasks = await taskModel.find({ house_id: house_id });
 		}
 
-		console.log("b");
-
 		tasks = get_week_tasks(tasks);
-
-		console.log(tasks);
 
 		// Cambiar users_id a users
 		tasks = tasks.map((task: Document<ITask>) => {
@@ -106,8 +102,6 @@ class TaskFacade {
 
 		await validate_task(id, req.userId);
 		await validate_users(updateTask.users_id, req.house);
-
-		console.log("Hola");
 
 		await taskModel.findOneAndUpdate({ _id: id }, updateTask, { new: true });
 
@@ -193,14 +187,11 @@ async function validate_task(task_id: string, user_id: string): Promise<any> {
 const get_week_tasks = (tasks: Document<ITask>[]): Document<ITask>[] => {
 	const today: Date = new Date();
 	const firstDayOfWeek: Date = new Date(today.setDate(today.getDate() - today.getDay()));
-	console.log(firstDayOfWeek);
-	
 
 	return tasks.filter((task: any) => {
 		const t_date: Date = task.until_date ? task.until_date : task.end_date;
 		const taskDate: Date = new Date(t_date);
-		console.log(taskDate);
-		
+
 		return taskDate >= firstDayOfWeek;
 	});
 };
