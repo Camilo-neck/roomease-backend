@@ -24,6 +24,22 @@ const taskSchema = new Schema(
 	{ timestamps: true },
 );
 
+taskSchema.post("updateMany", async (doc) => {
+	const tasksToDelete = await taskModel.find({ users_id: { $size: 0 } });
+
+	if (tasksToDelete.length > 0) {
+		tasksToDelete.forEach(async (task) => {
+			await taskModel.findOneAndDelete({ _id: task._id });
+		});
+	} else {
+		console.log("No se encontraron tareas para eliminar.");
+	}
+});
+
+const taskModel = mongoose.model<ITask>("Task", taskSchema);
+
+export default taskModel;
+
 // taskSchema.post("findOneAndUpdate", async (doc) => {
 // 	const task = doc;
 // 	await userModel.updateMany({ $pull: { tasks: task._id } });
@@ -70,19 +86,3 @@ const taskSchema = new Schema(
 // taskSchema.post("findOneAndDelete", async (doc) => {
 // 	await userModel.updateMany({ $pull: { tasks: doc._id } });
 // });
-
-taskSchema.post("updateMany", async (doc) => {
-	const tasksToDelete = await taskModel.find({ users_id: { $size: 0 } });
-
-	if (tasksToDelete.length > 0) {
-		tasksToDelete.forEach(async (task) => {
-			await taskModel.findOneAndDelete({ _id: task._id });
-		});
-	} else {
-		console.log("No se encontraron tareas para eliminar.");
-	}
-});
-
-const taskModel = mongoose.model<ITask>("Task", taskSchema);
-
-export default taskModel;

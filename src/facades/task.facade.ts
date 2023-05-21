@@ -12,29 +12,57 @@ import { NOTIFICATION_TYPES, STATUS_CODES } from "../utils/constants";
 import { create_notifications } from "./notification.facade";
 
 class TaskFacade {
+	// public async get(req: Request, res: Response): Promise<Response> {
+	// 	const { user_id, house_id } = req.query;
+	// 	let tasks: Document<ITask>[] | undefined = undefined;
+
+	// 	if (user_id === undefined) {
+	// 		tasks = await taskModel.find({ house_id: house_id }).populate({
+	// 			path: "users_id",
+	// 			select: "name email profile_picture",
+	// 		});
+	// 	} else {
+	// 		tasks = await taskModel.find({ house_id: house_id, users_id: user_id }).populate({
+	// 			path: "users_id",
+	// 			select: "name email profile_picture",
+	// 		});
+
+	// 		tasks = get_week_tasks(tasks);
+	// 	}
+
+	// 	//change users_id to users
+	// 	tasks = tasks.map((task: Document<ITask>) => {
+	// 		const taskObj = task.toObject();
+	// 		taskObj["users"] = taskObj["users_id"];
+	// 		delete taskObj["users_id"];
+	// 		return taskObj;
+	// 	});
+
+	// 	return res.status(STATUS_CODES.OK).json(tasks);
+	// }
+
 	public async get(req: Request, res: Response): Promise<Response> {
 		const { user_id, house_id } = req.query;
 		let tasks: Document<ITask>[] | undefined = undefined;
 
-		if (user_id === undefined) {
-			tasks = await taskModel.find({ house_id: house_id }).populate({
-				path: "users_id",
-				select: "name email profile_picture",
-			});
-		} else {
-			tasks = await taskModel.find({ house_id: house_id, users_id: user_id }).populate({
-				path: "users_id",
-				select: "name email profile_picture",
-			});
+		console.log("Hola");
+		
 
-			tasks = get_week_tasks(tasks);
+		if (user_id !== undefined) {
+			// Obtener las tareas filtrando por house_id y users_id
+			tasks = await taskModel.find({ house_id: house_id, users_id: user_id });
+		} else {
+			// Obtener todas las tareas filtrando solo por house_id
+			tasks = await taskModel.find({ house_id: house_id });
 		}
 
-		//change users_id to users
+		tasks = get_week_tasks(tasks);
+
+		// Cambiar users_id a users
 		tasks = tasks.map((task: Document<ITask>) => {
 			const taskObj = task.toObject();
-			taskObj["users"] = taskObj["users_id"];
-			delete taskObj["users_id"];
+			taskObj.users = taskObj.users_id;
+			delete taskObj.users_id;
 			return taskObj;
 		});
 
@@ -157,7 +185,6 @@ async function validate_task(task_id: string, user_id: string): Promise<any> {
 	if (!task) {
 		throw new ServerError("Task not found", STATUS_CODES.BAD_REQUEST);
 	}
-
 
 	return { task, user };
 }
