@@ -25,12 +25,12 @@ const houseSchema = new Schema(
 	{ timestamps: true },
 );
 
-houseSchema.post("save", async (doc) => {
-	await userModel.updateOne({ _id: doc.owner }, { $push: { houses: doc._id.toString() } });
-});
+// houseSchema.post("save", async (doc) => {
+// 	await userModel.updateOne({ _id: doc.owner }, { $push: { houses: doc._id.toString() } });
+// });
 
 houseSchema.post("deleteOne", async (doc) => {
-	await userModel.updateMany({ $pull: { houses: doc._id } });
+	//await userModel.updateMany({ $pull: { houses: doc._id } });
 	await taskModel.deleteMany({ house_id: doc._id });
 });
 

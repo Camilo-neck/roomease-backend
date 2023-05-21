@@ -18,14 +18,38 @@ const userSchema = new Schema(
 		description: { type: String, required: true },
 		profile_picture: { type: String, required: false },
 		tags: { type: [String], required: false }, //add ref later
-		houses: { type: [String], required: true, ref: "House" },
 	},
 	{ timestamps: true },
 );
 
-userSchema.post("deleteOne", async (doc) => {
-	await houseModel.updateMany({ $pull: { users: doc._id } });
-	await taskModel.updateMany({ $pull: { users: doc._id } });
+// userSchema.post("deleteOne", async (doc) => {
+// 	await houseModel.updateMany({ $pull: { users: doc._id } });
+// 	await taskModel.updateMany({ $pull: { users: doc._id } });
+// });
+
+userSchema.post("deleteOne", async function (doc) {
+	const session = await mongoose.startSession();
+	session.startTransaction();
+	console.log("hola");
+	
+
+	try {
+		// Eliminar usuario de la colección "houses"
+		await houseModel.updateMany({ $pull: { users: doc._id } }, { session });
+
+		// Eliminar usuario de la colección "tasks"
+		await taskModel.updateMany({ $pull: { users: doc._id } }, { session });
+
+		// Confirmar la transacción
+		await session.commitTransaction();
+	} catch (error) {
+		// Anular la transacción en caso de error
+		await session.abortTransaction();
+		throw error;
+	} finally {
+		// Finalizar la sesión
+		session.endSession();
+	}
 });
 
 userSchema.post("findOneAndUpdate", async function (doc) {
