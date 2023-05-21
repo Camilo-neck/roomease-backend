@@ -29,12 +29,10 @@ const userSchema = new Schema(
 // 	await taskModel.updateMany({ $pull: { users_id: doc._id } });
 // });
 
-let deletedUserId: string;
-
 userSchema.pre("deleteOne", async function () {
 	const doc = await this.model.findOne(this.getQuery());
-	console.log(doc);
-	
+	await houseModel.updateMany({ $pull: { users: doc._id } });
+ 	await taskModel.updateMany({ $pull: { users_id: doc._id } });
 });
 
 // userSchema.post("deleteOne", async function (doc) {

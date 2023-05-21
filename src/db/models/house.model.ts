@@ -29,8 +29,9 @@ const houseSchema = new Schema(
 // 	await userModel.updateOne({ _id: doc.owner }, { $push: { houses: doc._id.toString() } });
 // });
 
-houseSchema.post("deleteOne", async (doc) => {
-	//await userModel.updateMany({ $pull: { houses: doc._id } });
+
+houseSchema.pre("deleteOne", async function () {
+	const doc = await this.model.findOne(this.getQuery());
 	await taskModel.deleteMany({ house_id: doc._id });
 });
 
