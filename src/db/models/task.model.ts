@@ -26,7 +26,7 @@ const taskSchema = new Schema(
 
 taskSchema.post("updateMany", async (doc) => {
 	console.log("AAAAAA");
-	
+
 	const tasksToDelete = await taskModel.find({ users_id: { $size: 0 } });
 
 	if (tasksToDelete.length > 0) {
