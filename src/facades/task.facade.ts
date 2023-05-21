@@ -46,7 +46,6 @@ class TaskFacade {
 		let tasks: Document<ITask>[] | undefined = undefined;
 
 		console.log("Hola");
-		
 
 		if (user_id !== undefined) {
 			// Obtener las tareas filtrando por house_id y users_id
@@ -55,6 +54,9 @@ class TaskFacade {
 			// Obtener todas las tareas filtrando solo por house_id
 			tasks = await taskModel.find({ house_id: house_id });
 		}
+
+		console.log(tasks);
+		
 
 		tasks = get_week_tasks(tasks);
 
