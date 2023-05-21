@@ -78,6 +78,8 @@ class TaskFacade {
 		await validate_task(id, req.userId);
 		await validate_users(updateTask.users_id, req.house);
 
+		console.log("Hola");
+
 		await taskModel.findOneAndUpdate({ _id: id }, updateTask, { new: true });
 
 		return res.status(STATUS_CODES.OK).json({ message: "Task updated" });
@@ -156,9 +158,6 @@ async function validate_task(task_id: string, user_id: string): Promise<any> {
 		throw new ServerError("Task not found", STATUS_CODES.BAD_REQUEST);
 	}
 
-	if (!user?.tasks.includes(task_id)) {
-		throw new ServerError("The user does not have that task", STATUS_CODES.BAD_REQUEST);
-	}
 
 	return { task, user };
 }
