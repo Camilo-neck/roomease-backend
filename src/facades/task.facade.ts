@@ -45,7 +45,6 @@ class TaskFacade {
 		const { user_id, house_id } = req.query;
 		let tasks: Document<ITask>[] | undefined = undefined;
 
-		console.log("Hola");
 
 		if (user_id !== undefined) {
 			// Obtener las tareas filtrando por house_id y users_id
@@ -55,10 +54,12 @@ class TaskFacade {
 			tasks = await taskModel.find({ house_id: house_id });
 		}
 
-		console.log(tasks);
+		console.log("a");
 		
 
 		tasks = get_week_tasks(tasks);
+
+		console.log(tasks);
 
 		// Cambiar users_id a users
 		tasks = tasks.map((task: Document<ITask>) => {
