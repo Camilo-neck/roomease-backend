@@ -29,10 +29,10 @@ userSchema.post("deleteOne", async (doc) => {
 	await taskModel.updateMany({ $pull: { users: doc._id } });
 });
 
-userSchema.post("findOneAndUpdate", async function (doc) {
-	doc.password = await doc.encryptPassword(doc.password);
-	await doc.save();
-});
+// userSchema.post("findOneAndUpdate", async function (doc) {
+// 	doc.password = await doc.encryptPassword(doc.password);
+// 	await doc.save();
+// });
 
 userSchema.methods.encryptPassword = async (password: string): Promise<string> => {
 	const salt = await bcrypt.genSalt(10);
