@@ -193,10 +193,14 @@ async function validate_task(task_id: string, user_id: string): Promise<any> {
 const get_week_tasks = (tasks: Document<ITask>[]): Document<ITask>[] => {
 	const today: Date = new Date();
 	const firstDayOfWeek: Date = new Date(today.setDate(today.getDate() - today.getDay()));
+	console.log(firstDayOfWeek);
+	
 
 	return tasks.filter((task: any) => {
 		const t_date: Date = task.until_date ? task.until_date : task.end_date;
 		const taskDate: Date = new Date(t_date);
+		console.log(taskDate);
+		
 		return taskDate >= firstDayOfWeek;
 	});
 };
