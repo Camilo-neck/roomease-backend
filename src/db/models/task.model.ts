@@ -37,9 +37,11 @@ taskSchema.post("save", async (doc) => {
 	);
 });
 
-taskSchema.post("findOneAndDelete", async (doc) => {
+taskSchema.post("findOneAndDelete", async function ()  {
+	const doc = await this.model.findOne(this.getQuery());
 	await userModel.updateMany({ $pull: { tasks: doc._id } });
 });
+
 
 taskSchema.post("updateMany", async (doc) => {
 	const tasksToDelete = await taskModel.find({ users_id: { $size: 0 } });
