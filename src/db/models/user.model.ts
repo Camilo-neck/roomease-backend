@@ -22,36 +22,36 @@ const userSchema = new Schema(
 	{ timestamps: true },
 );
 
-// userSchema.pre("deleteOne", async function () {
-// 	const doc = await this.model.findOne(this.getQuery());
-// 	await houseModel.updateMany({ $pull: { users: doc._id } });
-// 	await taskModel.updateMany({ $pull: { users_id: doc._id } });
-// });
-
 userSchema.pre("deleteOne", async function () {
 	const doc = await this.model.findOne(this.getQuery());
-	const session = await mongoose.startSession();
-	session.startTransaction();
-	console.log("hola");
-
-	try {
-		// Eliminar usuario de la colección "houses"
-		await houseModel.updateMany({ $pull: { users: doc._id } }, { session });
-
-		// Eliminar usuario de la colección "tasks"
-		await taskModel.updateMany({ $pull: { users: doc._id } }, { session });
-
-		// Confirmar la transacción
-		await session.commitTransaction();
-	} catch (error) {
-		// Anular la transacción en caso de error
-		await session.abortTransaction();
-		console.log(error);
-	} finally {
-		// Finalizar la sesión
-		session.endSession();
-	}
+	await houseModel.updateMany({ $pull: { users: doc._id } });
+	await taskModel.updateMany({ $pull: { users_id: doc._id } });
 });
+
+// userSchema.pre("deleteOne", async function () {
+// 	const doc = await this.model.findOne(this.getQuery());
+// 	const session = await mongoose.startSession();
+// 	session.startTransaction();
+// 	console.log("hola");
+
+// 	try {
+// 		// Eliminar usuario de la colección "houses"
+// 		await houseModel.updateMany({ $pull: { users: doc._id } }, { session });
+
+// 		// Eliminar usuario de la colección "tasks"
+// 		await taskModel.updateMany({ $pull: { users: doc._id } }, { session });
+
+// 		// Confirmar la transacción
+// 		await session.commitTransaction();
+// 	} catch (error) {
+// 		// Anular la transacción en caso de error
+// 		await session.abortTransaction();
+// 		console.log(error);
+// 	} finally {
+// 		// Finalizar la sesión
+// 		session.endSession();
+// 	}
+// });
 
 userSchema.methods.encryptPassword = async (password: string): Promise<string> => {
 	const salt = await bcrypt.genSalt(10);
