@@ -24,26 +24,9 @@ const taskSchema = new Schema(
 	{ timestamps: true },
 );
 
-taskSchema.post("findOneAndUpdate", async (doc) => {
-	const task = doc;
-	await userModel.updateMany({ $pull: { tasks: task._id } });
-	await userModel.updateMany({ _id: { $in: task.users_id } }, { $push: { tasks: task._id.toString() } });
-});
-
-taskSchema.post("save", async (doc) => {
-	await userModel.updateMany(
-		{ _id: { $in: doc.users_id }, tasks: { $ne: doc._id.toString() } },
-		{ $addToSet: { tasks: doc._id.toString() } },
-	);
-});
-
-taskSchema.post("findOneAndDelete", async function ()  {
-	const doc = await this.model.findOne(this.getQuery());
-	await userModel.updateMany({ $pull: { tasks: doc._id } });
-});
-
-
 taskSchema.post("updateMany", async (doc) => {
+	console.log("AAAAAA");
+
 	const tasksToDelete = await taskModel.find({ users_id: { $size: 0 } });
 
 	if (tasksToDelete.length > 0) {
@@ -58,6 +41,12 @@ taskSchema.post("updateMany", async (doc) => {
 const taskModel = mongoose.model<ITask>("Task", taskSchema);
 
 export default taskModel;
+
+// taskSchema.post("findOneAndUpdate", async (doc) => {
+// 	const task = doc;
+// 	await userModel.updateMany({ $pull: { tasks: task._id } });
+// 	await userModel.updateMany({ _id: { $in: task.users_id } }, { $push: { tasks: task._id.toString() } });
+// });
 
 // taskSchema.post("findOneAndUpdate", async function (doc, next) {
 // 	const session = await mongoose.startSession();
@@ -87,4 +76,15 @@ export default taskModel;
 // 	} finally {
 // 		session.endSession();
 // 	}
+// });
+
+// taskSchema.post("save", async (doc) => {
+// 	await userModel.updateMany(
+// 		{ _id: { $in: doc.users_id }, tasks: { $ne: doc._id.toString() } },
+// 		{ $addToSet: { tasks: doc._id.toString() } },
+// 	);
+// });
+
+// taskSchema.post("findOneAndDelete", async (doc) => {
+// 	await userModel.updateMany({ $pull: { tasks: doc._id } });
 // });
