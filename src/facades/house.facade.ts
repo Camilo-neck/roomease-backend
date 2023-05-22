@@ -81,7 +81,7 @@ class HouseFacade {
 
 		//check if user is already in house
 		const house_id: string = house._id.toString();
-		if (user?.houses.includes(house_id)) {
+		if (house?.users.includes(req.userId)) {
 			throw new ServerError("User already in house", STATUS_CODES.BAD_REQUEST);
 		}
 
@@ -180,7 +180,7 @@ class HouseFacade {
 
 async function acceptRequest(userId: ObjectId, house_id: ObjectId) {
 	await houseModel.updateOne({ _id: house_id }, { $push: { users: userId }, $pull: { pending_users: userId } });
-	await userModel.updateOne({ _id: userId }, { $push: { houses: house_id } });
+	//await userModel.updateOne({ _id: userId }, { $push: { houses: house_id } });
 }
 
 async function rejectRequest(userId: ObjectId, house_id: ObjectId) {
