@@ -24,9 +24,10 @@ const userSchema = new Schema(
 	{ timestamps: true },
 );
 
-userSchema.post("deleteOne", async (doc) => {
+userSchema.pre("deleteOne", async function () {
+	const doc = await this.model.findOne(this.getQuery());
 	await houseModel.updateMany({ $pull: { users: doc._id } });
-	await taskModel.updateMany({ $pull: { users: doc._id } });
+	await taskModel.updateMany({ $pull: { users_id: doc._id } });
 });
 
 // userSchema.post("findOneAndUpdate", async function (doc) {
