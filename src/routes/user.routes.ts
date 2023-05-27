@@ -24,5 +24,3 @@ router.put(
 router.delete("/:id", Auth, SchemaValidator(paramsSchema, FIELD_TYPES.PARAMS), asyncError(userController.deleteUser));
 
 export default router;
-
-//hola
