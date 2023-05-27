@@ -6,6 +6,7 @@ import { INotification } from "../dtos/INotification.dto";
 import { NOTIFICATION_TYPES, STATUS_CODES } from "../utils/constants";
 import { pusherServer } from "../utils/pusher";
 
+
 class NotificationFacade {
 	public async list(req: Request, res: Response): Promise<Response | undefined> {
 		const userId: ObjectId = req.userId;
