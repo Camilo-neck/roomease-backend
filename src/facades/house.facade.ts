@@ -2,8 +2,9 @@ import { Request, Response } from "express";
 import { Document, ObjectId } from "mongoose";
 
 import houseModel from "../db/models/house.model";
-import taskModel from "../db/models/task.model";
 import userModel from "../db/models/user.model";
+const userSchema = userModel.schema;
+import taskModel from "../db/models/task.model";
 import { IHouse } from "../dtos/Ihouse.dto";
 import { IUser } from "../dtos/Iuser.dto";
 import { ServerError } from "../errors/server.error";
@@ -80,7 +81,7 @@ class HouseFacade {
 
 		//check if user is already in house
 		const house_id: string = house._id.toString();
-		if (user?.houses.includes(house_id)) {
+		if (house?.users.includes(req.userId)) {
 			throw new ServerError("User already in house", STATUS_CODES.BAD_REQUEST);
 		}
 
@@ -179,7 +180,7 @@ class HouseFacade {
 
 async function acceptRequest(userId: ObjectId, house_id: ObjectId) {
 	await houseModel.updateOne({ _id: house_id }, { $push: { users: userId }, $pull: { pending_users: userId } });
-	await userModel.updateOne({ _id: userId }, { $push: { houses: house_id } });
+	//await userModel.updateOne({ _id: userId }, { $push: { houses: house_id } });
 }
 
 async function rejectRequest(userId: ObjectId, house_id: ObjectId) {
@@ -201,7 +202,7 @@ async function populateUsers(house: any, isOwner: boolean): Promise<IHouse> {
 	if (!isOwner) {
 		houseData = await house.populate({
 			path: "users",
-			select: "name email",
+			select: "name email profile_picture",
 		});
 		//exclude pending users
 		const { pending_users, ...rest } = house._doc;
@@ -210,11 +211,11 @@ async function populateUsers(house: any, isOwner: boolean): Promise<IHouse> {
 		houseData = await house.populate([
 			{
 				path: "users",
-				select: "name email",
+				select: "name email profile_picture",
 			},
 			{
 				path: "pending_users",
-				select: "name email",
+				select: "name email profile_picture",
 			},
 		]);
 	}
@@ -224,10 +225,18 @@ async function populateUsers(house: any, isOwner: boolean): Promise<IHouse> {
 
 async function remove_user(house_id: ObjectId, user_id: ObjectId): Promise<void> {
 	await userModel.findByIdAndUpdate(user_id, { $pull: { houses: house_id } }, { new: true });
-	//Triger -> ¿Cómo pasarle la constante house_id?. También faltaría poner que cuando una tarea en una casa solo tenga
-	// un usuario y este se sale, se elimine la tarea.
-	await taskModel.updateMany({ house_id: house_id }, { $pull: { users_id: user_id } });
-	await houseModel.updateOne({ _id: house_id }, { $pull: { users: user_id } });
+
+	// Definir la función de trigger dentro de la función remove_user
+	const triggerFunction = async (doc: any) => {
+		await taskModel.updateMany({ house_id }, { $pull: { users_id: user_id } });
+		await houseModel.updateOne({ _id: house_id }, { $pull: { users: user_id } });
+	};
+
+	// Registrar el trigger utilizando la función definida anteriormente
+	userSchema.post("findOneAndUpdate", triggerFunction);
+
+	// Ejecutar el trigger de forma explícita después de la actualización
+	await triggerFunction(null);
 }
 
 export default new HouseFacade();

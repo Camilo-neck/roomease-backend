@@ -10,9 +10,6 @@ export interface IUser {
 	description: string;
 	profile_picture: string;
 	tags: string[];
-	scores: string[];
-	tasks: string[];
-	houses: string[];
 	encryptPassword(password: string): Promise<string>;
 	validatePassword(password: string): Promise<boolean>;
 }

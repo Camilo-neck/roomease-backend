@@ -44,7 +44,7 @@ class AuthFacade {
 
 		// add token to response header
 		res.setHeader("Access-Control-Expose-Headers", "auth-token");
-		return res.header("auth-token", token).status(STATUS_CODES.CREATED).json({ user, refreshToken });
+		return res.header("auth-token", token).status(STATUS_CODES.OK).json({ user, refreshToken });
 	}
 
 	public async refreshToken(req: Request, res: Response): Promise<Response | undefined> {

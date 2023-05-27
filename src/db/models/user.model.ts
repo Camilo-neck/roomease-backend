@@ -1,5 +1,6 @@
 import bcrypt from "bcryptjs";
 import mongoose from "mongoose";
+import { ObjectId } from "mongoose";
 
 import { IUser } from "../../dtos/Iuser.dto";
 import houseModel from "./house.model";
@@ -17,21 +18,44 @@ const userSchema = new Schema(
 		description: { type: String, required: true },
 		profile_picture: { type: String, required: false },
 		tags: { type: [String], required: false }, //add ref later
-		scores: { type: [String], required: true }, //add ref later
-		tasks: { type: [String], required: true }, //add ref later
-		houses: { type: [String], required: true, ref: "House" },
 	},
 	{ timestamps: true },
 );
 
-userSchema.post("deleteOne", async (doc) => {
+userSchema.pre("deleteOne", async function () {
+	const doc = await this.model.findOne(this.getQuery());
 	await houseModel.updateMany({ $pull: { users: doc._id } });
-	await taskModel.updateMany({ $pull: { users: doc._id } });
+	await taskModel.updateMany({ $pull: { users_id: doc._id } });
 });
 
-userSchema.post("findOneAndUpdate", async (doc) => {
-	//
-});
+// userSchema.pre("deleteOne", async function () {
+// 	const doc = await this.model.findOne(this.getQuery());
+// 	const session = await mongoose.startSession();
+// 	session.startTransaction();
+// 	console.log("hola");
+
+// 	try {
+// 		// Eliminar usuario de la colección "houses"
+// 		await houseModel.updateMany({ $pull: { users: doc._id } }, { session });
+
+// 		// Eliminar usuario de la colección "tasks"
+// 		await taskModel.updateMany({ $pull: { users: doc._id } }, { session });
+
+// 		// Confirmar la transacción
+// 		await session.commitTransaction();
+// 	} catch (error) {
+// 		// Anular la transacción en caso de error
+// 		await session.abortTransaction();
+// 		console.log(error);
+// 	} finally {
+// 		// Finalizar la sesión
+// 		session.endSession();
+// 	}
+// });
+// userSchema.post("findOneAndUpdate", async function (doc) {
+// 	doc.password = await doc.encryptPassword(doc.password);
+// 	await doc.save();
+// });
 
 userSchema.methods.encryptPassword = async (password: string): Promise<string> => {
 	const salt = await bcrypt.genSalt(10);

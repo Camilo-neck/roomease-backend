@@ -8,6 +8,7 @@ const notificationSchema = new Schema({
 	type: { type: String, required: true },
 	title: { type: String, required: true },
 	description: { type: String, required: true },
+	read: { type: Boolean, default: false },
 	recipient: { type: Schema.Types.ObjectId, ref: "User", required: true },
 });
 

@@ -5,7 +5,6 @@
   "main": "index.ts",
   "scripts": {
     "build": "npm run format && tsc && tsc-alias",
-    "prestart": "npm run build",
     "start": "node dist/index.js",
     "dev": "nodemon src/index.ts",
     "format": "prettier --write \"src/**/*.ts\" && eslint src --ext .ts --fix",
@@ -45,6 +44,7 @@
     "jsonwebtoken": "^9.0.0",
     "mongodb": "^5.1.0",
     "mongoose": "^7.0.0",
-    "morgan": "^1.10.0"
+    "morgan": "^1.10.0",
+    "pusher": "^5.1.3"
   }
 }
