@@ -6,7 +6,6 @@ import { INotification } from "../dtos/INotification.dto";
 import { NOTIFICATION_TYPES, STATUS_CODES } from "../utils/constants";
 import { pusher } from "../utils/pusher";
 
-
 class NotificationFacade {
 	public async list(req: Request, res: Response): Promise<Response | undefined> {
 		const userId: ObjectId = req.userId;
@@ -40,11 +39,12 @@ export const create_notifications = async (data: ICreateNotification): Promise<v
 		return get_notification_data({ ...data, recipients: [recipient] });
 	});
 
-	await notificationModel.insertMany(notificationsData);
-	notificationsData.forEach(async (notification: INotification) => {
+	const notifications = await notificationModel.insertMany(notificationsData);
+	notifications.forEach(async (notification: INotification) => {
 		const recipient_id: ObjectId = notification.recipient;
 		const channel = `notifications-${recipient_id}`;
 		const event = "inserted";
+		console.log(`Sending notification to ${channel}`);
 
 		await pusher.trigger(channel, event, notification);
 	});
