@@ -67,9 +67,8 @@ class HouseFacade {
 	}
 
 	public async delete(req: Request, res: Response): Promise<Response | undefined> {
-		const { house_id } = req.params;
-		await houseModel.deleteOne({ _id: house_id });
-
+		const { houseId } = req.params;
+		await houseModel.deleteOne({ _id: houseId });
 		return res.status(STATUS_CODES.OK).json({ message: "House deleted" });
 	}
 
