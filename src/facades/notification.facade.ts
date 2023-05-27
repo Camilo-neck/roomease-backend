@@ -4,7 +4,7 @@ import { Document, ObjectId } from "mongoose";
 import notificationModel from "../db/models/notification.model";
 import { INotification } from "../dtos/INotification.dto";
 import { NOTIFICATION_TYPES, STATUS_CODES } from "../utils/constants";
-import { pusherServer } from "../utils/pusher";
+import { pusher } from "../utils/pusher";
 
 
 class NotificationFacade {
@@ -41,12 +41,12 @@ export const create_notifications = async (data: ICreateNotification): Promise<v
 	});
 
 	await notificationModel.insertMany(notificationsData);
-	notificationsData.forEach((notification: INotification) => {
+	notificationsData.forEach(async (notification: INotification) => {
 		const recipient_id: ObjectId = notification.recipient;
 		const channel = `notifications-${recipient_id}`;
 		const event = "inserted";
 
-		pusherServer.trigger(channel, event, notification);
+		await pusher.trigger(channel, event, notification);
 	});
 };
 
