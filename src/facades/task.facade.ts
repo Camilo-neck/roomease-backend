@@ -47,10 +47,16 @@ class TaskFacade {
 
 		if (user_id !== undefined) {
 			// Obtener las tareas filtrando por house_id y users_id
-			tasks = await taskModel.find({ house_id: house_id, users_id: user_id });
+			tasks = await taskModel.find({ house_id: house_id, users_id: user_id }).populate({
+				path: "users_id",
+				select: "name email profile_picture",
+			});
 		} else {
 			// Obtener todas las tareas filtrando solo por house_id
-			tasks = await taskModel.find({ house_id: house_id });
+			tasks = await taskModel.find({ house_id: house_id }).populate({
+				path: "users_id",
+				select: "name email profile_picture",
+			});
 		}
 
 		tasks = get_week_tasks(tasks);
